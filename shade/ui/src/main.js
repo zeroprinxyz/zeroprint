@@ -621,7 +621,7 @@ function netSwitch(host) {
       k === here
         ? `<span class="on">${k === "mainnet" ? "Mainnet" : "Testnet"}</span>`
         : n[k]
-          ? `<a href="${n[k]}/app">${k === "mainnet" ? "Mainnet" : "Testnet"}</a>`
+          ? `<a href="${n[k]}/app"${k === "testnet" ? ` target="_blank" rel="noopener"` : ""}>${k === "mainnet" ? "Mainnet" : "Testnet"}</a>`
           : `<span class="off" title="Not live yet">${k === "mainnet" ? "Mainnet" : "Testnet"}</span>`,
     )
     .join("");

@@ -8,6 +8,7 @@ import { DatabaseSync } from "node:sqlite";
 import { createBundleScanner } from "./launches/bundles.mjs";
 import { createEthScanner } from "./launches/eth.mjs";
 import { createInvestigator } from "./launches/investigate.mjs";
+import { createPeakFinder } from "./launches/peak.mjs";
 import { createSolScanner } from "./launches/sol.mjs";
 import { createSolRpc } from "./launches/solrpc.mjs";
 
@@ -53,6 +54,51 @@ const scanEth = process.env.ETHERSCAN_API_KEY
   ? createEthScanner({ apiKey: process.env.ETHERSCAN_API_KEY, rpcUrl: process.env.ETH_RPC ?? "https://ethereum-rpc.publicnode.com" })
   : null;
 const scanBundles = solRpc ? createBundleScanner(solRpc) : null;
+const peakOf = createPeakFinder();
+
+/** The scanned address as a token: a Robinhood launch from the index, or a Solana mint. */
+let tokenQ = null;
+const tokenCache = new Map(); // addr -> { at, value }
+async function tokenInfo(addr) {
+  if (/^0x[0-9a-f]{40}$/.test(addr)) {
+    tokenQ ??= getRhDb().prepare(
+      "select creator, token, name, symbol, coalesce(launchpad, '') launchpad, ts, block, peak_mc_usd, 'robinhood' chain from launches where token = ?",
+    );
+    return tokenQ.get(addr) ?? null;
+  }
+  if (!solRpc) return null;
+  const hit = tokenCache.get(addr);
+  if (hit && Date.now() - hit.at < 6 * 3600_000) return hit.value;
+  const asset = await solRpc.call("getAsset", { id: addr }).catch(() => null);
+  let value = null;
+  if (/^Fungible/.test(asset?.interface ?? "")) {
+    // creator: whoever paid for the mint's first transaction, if it is within reach
+    let before;
+    let oldest;
+    for (let i = 0; i < 60; i++) {
+      const s = await solRpc.call("getSignaturesForAddress", [addr, { limit: 1000, ...(before && { before }) }]).catch(() => null);
+      if (!s?.length) break;
+      oldest = before = s[s.length - 1].signature;
+      if (s.length < 1000) {
+        before = null;
+        break;
+      }
+    }
+    const [tx] = oldest && !before ? await solRpc.transactions([oldest]) : [null];
+    const meta = asset.content?.metadata ?? {};
+    value = {
+      chain: "solana",
+      token: addr,
+      name: meta.name ?? "",
+      symbol: meta.symbol ?? "",
+      launchpad: "",
+      ts: tx?.blockTime ?? null,
+      creator: tx?.transaction?.message?.accountKeys?.[0]?.pubkey ?? null,
+    };
+  }
+  tokenCache.set(addr, { at: Date.now(), value });
+  return value;
+}
 const bundleCache = new Map(); // hub -> { at, value }
 const deepCache = new Map(); // addr -> { at, value }
 
@@ -307,6 +353,31 @@ async function handle(req, res) {
     );
     res.writeHead(200, { ...SECURITY, "content-type": "application/json", "cache-control": "no-store" });
     return res.end(JSON.stringify({ launches: out }));
+  }
+
+  if (p === "/footprint-api/token" && req.method === "GET") {
+    const raw = url.searchParams.get("addr") ?? "";
+    const addr = raw.startsWith("0x") ? raw.toLowerCase() : raw;
+    const ok = /^0x[0-9a-f]{40}$/.test(addr) || /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr);
+    const token = ok ? await tokenInfo(addr).catch(() => null) : null;
+    res.writeHead(ok ? 200 : 400, { ...SECURITY, "content-type": "application/json", "cache-control": "no-store" });
+    return res.end(JSON.stringify(ok ? { token } : { error: "bad address" }));
+  }
+
+  if (p === "/footprint-api/peak" && req.method === "GET") {
+    const chain = url.searchParams.get("chain");
+    const raw = url.searchParams.get("token") ?? "";
+    const token = chain === "ethereum" ? raw.toLowerCase() : raw;
+    const ok = (chain === "ethereum" && /^0x[0-9a-f]{40}$/.test(token)) || (chain === "solana" && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(token));
+    if (!ok) {
+      res.writeHead(400, { ...SECURITY, "content-type": "application/json" });
+      return res.end(JSON.stringify({ error: "bad token" }));
+    }
+    // answer within 20 s; a slow lookup keeps running and the page asks again
+    const pending = Symbol();
+    const v = await Promise.race([peakOf(chain, token), new Promise((r) => setTimeout(() => r(pending), 20_000))]);
+    res.writeHead(200, { ...SECURITY, "content-type": "application/json", "cache-control": "no-store" });
+    return res.end(JSON.stringify(v === pending ? { pending: true } : { peak: v }));
   }
 
   if (p === "/footprint-api/trace" && req.method === "GET") {

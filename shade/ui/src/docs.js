@@ -25,7 +25,7 @@ fetch("/config.json", { cache: "no-store" })
     $("#addrRows").innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
     const other = cfg.chainName.includes("Testnet") ? ["mainnet", "Mainnet"] : ["testnet", "Testnet"];
     const url = cfg.networks?.[other[0]];
-    if (url) $("#otherNet").innerHTML = `${other[1]} addresses: <a href="${esc(url)}/docs#networks">${esc(url.replace(/^https?:\/\//, ""))}</a>.`;
+    if (url) $("#otherNet").innerHTML = `${other[1]} addresses: <a href="${esc(url)}/docs#networks"${other[0] === "testnet" ? ` target="_blank" rel="noopener"` : ""}>${esc(url.replace(/^https?:\/\//, ""))}</a>.`;
   })
   .catch(() => {});
 

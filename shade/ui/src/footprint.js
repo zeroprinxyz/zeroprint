@@ -153,14 +153,65 @@ function directLinks(r) {
   return rel;
 }
 
+const usdShort = (v) => (v >= 1e6 ? `$${(v / 1e6).toFixed(v >= 1e7 ? 0 : 1)}M` : v >= 1e3 ? `$${Math.round(v / 1e3)}k` : `$${Math.round(v)}`);
+const PEAK_CHAINS = new Set(["solana", "ethereum", "robinhood"]);
+
+// Peaks for Solana/Ethereum tokens come from the server (GeckoTerminal, slow and approximate),
+// Robinhood ones from the launch index (instant); one at a time, and since rows re-render
+// often, answers are kept here and re-applied.
+const peaks = new Map(); // "chain:token" -> { text, title }
+const peakQueue = [];
+let peakBusy = false;
+function hydratePeaks(root) {
+  root.querySelectorAll("[data-peak]").forEach((el) => {
+    const k = el.dataset.peak;
+    const v = peaks.get(k);
+    if (v) {
+      el.textContent = v.text;
+      el.title = v.title;
+    } else {
+      if (!peakQueue.includes(k)) peakQueue.push(k);
+      el.textContent = " · peak …";
+    }
+  });
+  if (!peakBusy) nextPeak();
+}
+async function nextPeak() {
+  const k = peakQueue.find((x) => !peaks.has(x));
+  if (!k) return void (peakBusy = false);
+  peakBusy = true;
+  const [chain, token] = k.split(":");
+  let v = null;
+  if (chain === "robinhood") {
+    const t = (await fetch(`/footprint-api/token?addr=${encodeURIComponent(token)}`).then((r) => r.json()).catch(() => ({}))).token;
+    v = t?.peak_mc_usd ? { text: ` · peak ${usdShort(t.peak_mc_usd)}`, title: "Peak market cap, from our Robinhood Chain index" } : { text: "", title: "" };
+  }
+  for (let i = 0; i < 12 && !v; i++) {
+    const j = await fetch(`/footprint-api/peak?chain=${chain}&token=${encodeURIComponent(token)}`).then((r) => (r.ok ? r.json() : { peak: null })).catch(() => ({ peak: null }));
+    if (j.pending) continue;
+    const p = j.peak;
+    const day = (t) => new Date(t * 1000).toISOString().slice(0, 10);
+    v = p
+      ? { text: ` · peak ~${usdShort(p.peakUsd)}`, title: `Approximate peak market cap on ${day(p.at)}, from GeckoTerminal daily candles (history from ${day(p.since)})` }
+      : { text: "", title: "" };
+  }
+  peaks.set(k, v ?? { text: "", title: "" });
+  document.querySelectorAll(`[data-peak="${CSS.escape(k)}"]`).forEach((el) => {
+    el.textContent = peaks.get(k).text;
+    el.title = peaks.get(k).title;
+  });
+  nextPeak();
+}
+
 function tokenRow(l) {
   const when = l.ts ? new Date(l.ts * 1000).toISOString().slice(0, 10) : l.block ? `block ${l.block}` : "";
-  const bits = [l.launchpad, when, l.peak_mc_usd ? `peak ${usd(l.peak_mc_usd)}` : ""].filter(Boolean).join(" · ");
+  const bits = [l.launchpad, when, l.peak_mc_usd ? `peak ${usdShort(l.peak_mc_usd)}` : ""].filter(Boolean).join(" · ");
+  const askPeak = !l.peak_mc_usd && PEAK_CHAINS.has(l.chain) && l.token;
   const ex = EXPLORER[l.chain];
   const gm = GMGN[l.chain];
   return `<div class="fp-lrow">
       <span class="fp-lname">${esc(l.name || "Unnamed")} <i>${esc(l.symbol ? `$${l.symbol}` : "")}</i></span>
-      <span class="fp-lmeta"><b class="fp-chain c-${esc(l.chain)}">${esc(CHAIN_LABEL[l.chain] ?? l.chain)}</b> ${esc(bits)}</span>
+      <span class="fp-lmeta"><b class="fp-chain c-${esc(l.chain)}">${esc(CHAIN_LABEL[l.chain] ?? l.chain)}</b> ${esc(bits)}${askPeak ? `<span data-peak="${esc(l.chain)}:${esc(l.token)}"></span>` : ""}</span>
       <span class="fp-licons">
         ${ex ? `<a class="fp-ico" href="${ex}${esc(l.token)}" target="_blank" rel="noopener noreferrer" title="Contract on the explorer">${ICON_EXPLORER}</a>` : ""}
         ${gm ? `<a class="fp-ico gmgn" href="${gm}${esc(l.token)}" target="_blank" rel="noopener noreferrer" title="Open on GMGN"><img src="/gmgn.png" alt="GMGN" width="20" height="20" /></a>` : ""}
@@ -239,6 +290,7 @@ function renderLaunches(out, j, state) {
       ${state.done ? "" : `<div class="fp-follow"><span class="spin"></span>Following the money… ${state.nodes ?? 1} wallets checked</div>`}
     </section>`;
   // headline findings
+  hydratePeaks(host);
   const me = fs.find((f) => f.kind === "launched" && f.path.length === 1);
   const others = fs.filter((f) => f.kind === "launched" && f.path.length > 1).length;
   const bundle = fs.find((f) => f.kind === "bundle" && f.creator !== norm(j.address));
@@ -247,6 +299,29 @@ function renderLaunches(out, j, state) {
   if (others) msgs.push([`${others} wallet${others > 1 ? "s" : ""} on this money trail launched tokens`, "Up to two hops away, through transfers or bridges, on this chain or another."]);
   if (bundle) msgs.push([`Linked to the ${bundle.symbol ? `$${bundle.symbol}` : ""} launch`, "Wallets linked to this one bought it right at launch, a bundle pattern."]);
   for (const [t, d] of msgs.reverse()) box.insertAdjacentHTML("afterbegin", `<div class="fp-find lv-high launch"><i></i><div><b>${esc(t)}</b><p>${esc(d)}</p></div></div>`);
+}
+
+/** A token contract or mint has no money trail of its own: say what it is and who made it. */
+async function showToken(out, r) {
+  if (!r.isContract && !isSol(r.address)) return;
+  const j = await fetch(`/footprint-api/token?addr=${encodeURIComponent(r.address)}`).then((x) => x.json()).catch(() => ({}));
+  const t = j.token;
+  if (!t) return;
+  // a wallet's exposure score and "no money trail" don't apply to a token
+  if (!r.in.length && !r.out.length) {
+    out.querySelector(".fp-head .fp-h").textContent = "Token";
+    out.querySelector(".fp-score")?.remove();
+    out.querySelectorAll(".fp-findings .fp-find:not(.launch)").forEach((e) => e.remove());
+  }
+  const host = out.querySelector("#fpToken");
+  host.innerHTML = `<section class="fp-launch">
+      <div class="fp-h">This address is a token</div>
+      ${tokenRow(t)}
+      <p class="fp-why">A token has no money trail of its own.${
+        t.creator ? ` It was created by <a class="mono" href="/footprint?addr=${esc(t.creator)}">${esc(short(t.creator))}</a>: <a href="/footprint?addr=${esc(t.creator)}">scan the creator →</a>` : ""
+      }</p>
+    </section>`;
+  hydratePeaks(host);
 }
 
 const LEVEL = { high: "High exposure", mid: "Moderate exposure", low: "Low exposure" };
@@ -362,6 +437,7 @@ function report(r) {
       <div class="fp-score lv-${x.level}"><b>${LEVEL[x.level]}</b><span>${x.total} public transfer${x.total === 1 ? "" : "s"}</span></div>
     </div>
     ${r.partial?.length ? `<div class="note warn">Some sources didn't answer this time: ${r.partial.map(esc).join(", ")}. The rest is below.</div>` : ""}
+    <div id="fpToken"></div>
     <div class="fp-findings">${x.findings
       .map(([lv, t, d]) => `<div class="fp-find lv-${lv}"><i></i><div><b>${t}</b><p>${esc(d)}</p></div></div>`)
       .join("")}</div>
@@ -420,6 +496,7 @@ export function viewFootprint(el, params) {
       const j = await r.json().catch(() => ({}));
       out.innerHTML = r.ok ? report(j) : `<div class="note bad">${esc(j.error ?? `Scan failed (${r.status})`)}</div>`;
       if (!r.ok) return;
+      showToken(out, j);
       // Launches: shown only when something is found. Robinhood index first (instant), then
       // the server's investigation, which follows the money two hops across chains.
       const rel = directLinks(j);

@@ -26,9 +26,11 @@ addEventListener("pageshow", () => $("#wipe").classList.remove("on"));
 const cfg = await fetch("/config.json", { cache: "no-store" }).then((r) => r.json());
 const pub = createPublicClient({ transport: http(`${location.origin}/rpc`) });
 $("#net").textContent = cfg.chainName;
-// on mainnet, offer the free testnet next to the badge
+// on mainnet, offer the free testnet next to the badge; on the testnet, the way back
 if (cfg.networks?.testnet && !cfg.chainName.includes("Testnet"))
-  $("#net").insertAdjacentHTML("afterend", ` <a class="trylink" href="${cfg.networks.testnet}/app">Try it free on testnet →</a>`);
+  $("#net").insertAdjacentHTML("afterend", ` <a class="trylink" href="${cfg.networks.testnet}/app" target="_blank" rel="noopener">Try it free on testnet →</a>`);
+else if (cfg.networks?.mainnet && cfg.chainName.includes("Testnet"))
+  $("#net").insertAdjacentHTML("afterend", ` <a class="trylink" href="${cfg.networks.mainnet}/">Test ETH only · go to mainnet →</a>`);
 
 async function stats() {
   try {

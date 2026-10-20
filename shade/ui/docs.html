@@ -71,7 +71,7 @@
           <p class="lede">ZeroPrint is a zero-knowledge privacy pool for ETH on Robinhood Chain. You deposit from one wallet and later withdraw to a fresh wallet, and nobody on-chain can tell which deposit paid for which withdrawal.</p>
           <p>It runs on the open-source, audited <a href="https://github.com/0xbow-io/privacy-pools-core" target="_blank" rel="noreferrer">Privacy Pools</a> protocol by 0xbow (Apache-2.0). ZeroPrint deploys those contracts without an owner, adds an on-chain Association Set Provider that keeps stolen funds out, and gives you an app and a command-line tool where every secret stays on your device.</p>
           <div class="callout">
-            <b>Status.</b> ZeroPrint is live on <b>Robinhood Chain mainnet</b>, with a free <a href="https://testnet.zeroprint.xyz">testnet</a> to try it first. ZeroPrint's own contract and app are not audited yet: start with small amounts. See <a href="#status">Status</a>.
+            <b>Status.</b> ZeroPrint is live on <b>Robinhood Chain mainnet</b>, with a free <a href="https://testnet.zeroprint.xyz" target="_blank" rel="noopener">testnet</a> to try it first. ZeroPrint's own contract and app are not audited yet: start with small amounts. See <a href="#status">Status</a>.
           </div>
         </section>
 
@@ -127,7 +127,7 @@
             <li>Click <b>Connect wallet</b>. The app adds and switches to the right network.</li>
             <li>Create a <b>Zero Key</b> (next section).</li>
           </ol>
-          <div class="callout">Mainnet uses real ETH. To try everything first, use the <a href="https://testnet.zeroprint.xyz">testnet</a> with free test ETH from the Robinhood Chain Testnet faucet.</div>
+          <div class="callout">Mainnet uses real ETH. To try everything first, use the <a href="https://testnet.zeroprint.xyz" target="_blank" rel="noopener">testnet</a> with free test ETH from the Robinhood Chain Testnet faucet.</div>
         </section>
 
         <section id="key">
@@ -186,7 +186,7 @@
             <li>tokens created by wallets it funded, was funded by, or bridged to, directly or through one more wallet;</li>
             <li><b>bundle patterns</b>: two or more linked wallets that bought the same token right at launch (Solana: in its launch block; Robinhood: within 3 blocks), with the token's deployer and, when the deployer is on the trail, how it connects.</li>
           </ul>
-          <p>Each token links to its contract on the chain's explorer and to GMGN. Nothing is shown when nothing is found. Exchanges, DEXes and privacy pools end a path, because there is no on-chain link through them.</p>
+          <p>Each token links to its contract on the chain's explorer and to GMGN, with its peak market cap: Robinhood peaks come from our own index of the chain; Solana and Ethereum peaks are approximate, from GeckoTerminal's daily candles, and can miss launch-day spikes. Scanning a token's own address shows the token and its creator. Nothing is shown when nothing is found. Exchanges, DEXes and privacy pools end a path, because there is no on-chain link through them.</p>
         </section>
 
         <section id="trouble">
