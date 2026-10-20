@@ -17,7 +17,7 @@ const RPC = "http://127.0.0.1:8923";
 const NODE = process.execPath;
 const deployment = JSON.parse(fs.readFileSync(`${ROOT}/packages/contracts/deployments/zeroprint-31337.json`, "utf8"));
 const keys = Object.fromEntries(
-  fs.readFileSync(`${ROOT}/shade/local/anvil-keys.txt`, "utf8").trim().split("\n").map((l) => {
+  fs.readFileSync(`${ROOT}/zeroprint/local/anvil-keys.txt`, "utf8").trim().split("\n").map((l) => {
     const [i, a, pk] = l.split(" ");
     return [i, { a, pk }];
   }),
@@ -27,7 +27,7 @@ const log = (...a) => console.log(`[${((Date.now() - t0) / 1000).toFixed(0)}s]`,
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // --- a relayer and a keeper for this deployment
-const work = `${ROOT}/shade/e2e/zp-work`;
+const work = `${ROOT}/zeroprint/e2e/zp-work`;
 fs.rmSync(work, { recursive: true, force: true });
 fs.mkdirSync(work, { recursive: true });
 fs.writeFileSync(
@@ -58,7 +58,7 @@ const start = (file, env, cwd) => {
   children.push(c);
   return c;
 };
-start("start.mjs", { CONFIG_PATH: `${work}/relayer.json`, SHADE_RELAYER_PORT: "8925" }, `${ROOT}/shade/relayer`);
+start("start.mjs", { CONFIG_PATH: `${work}/relayer.json`, SHADE_RELAYER_PORT: "8925" }, `${ROOT}/zeroprint/relayer`);
 let keeper = start(
   "keeper.mjs",
   {
@@ -70,7 +70,7 @@ let keeper = start(
     POLL_SEC: "4",
     PORT: "8926",
   },
-  `${ROOT}/shade/asp`,
+  `${ROOT}/zeroprint/asp`,
 );
 process.on("exit", () => children.forEach((c) => c.kill()));
 await sleep(4000);

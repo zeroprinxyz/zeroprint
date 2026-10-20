@@ -186,7 +186,8 @@
             <li>tokens created by wallets it funded, was funded by, or bridged to, directly or through one more wallet;</li>
             <li><b>bundle patterns</b>: two or more linked wallets that bought the same token right at launch (Solana: in its launch block; Robinhood: within 3 blocks), with the token's deployer and, when the deployer is on the trail, how it connects.</li>
           </ul>
-          <p>Each token links to its contract on the chain's explorer and to GMGN, with its peak market cap: Robinhood peaks come from our own index of the chain; Solana and Ethereum peaks are approximate, from GeckoTerminal's daily candles, and can miss launch-day spikes. Scanning a token's own address shows the token and its creator. Nothing is shown when nothing is found. Exchanges, DEXes and privacy pools end a path, because there is no on-chain link through them.</p>
+          <p>Each token links to its contract on the chain's explorer and to GMGN, with its peak market cap: Robinhood peaks come from our own index of the chain; Solana and Ethereum peaks are approximate, from GeckoTerminal's daily candles, and can miss launch-day spikes. Scanning a token's own address shows the token and its creator. Nothing is shown when nothing is found.</p>
+          <p><b>Privacy.</b> Scans are not logged: no accounts, no analytics, no access logs. The scan service only sees a scrambled ID of your IP that changes daily, never the IP itself. Results, which are public chain data, are cached for up to 6 hours. Every scan ends with what Footprint cannot see, and each finding says where it comes from. Exchanges, DEXes and privacy pools end a path, because there is no on-chain link through them.</p>
         </section>
 
         <section id="trouble">
@@ -215,7 +216,7 @@
 <pre class="code"><code>git clone https://github.com/zeroprinxyz/zeroprint && cd zeroprint
 yarn install --ignore-scripts
 yarn workspace @0xbow/privacy-pools-core-sdk build
-node shade/cli/zeroprint.mjs status</code></pre>
+node zeroprint/cli/zeroprint.mjs status</code></pre>
 <pre class="code"><code>zeroprint status                         <span class="c">// list your deposits</span>
 zeroprint approve                        <span class="c">// queue/approve your deposits (depositing wallet's key)</span>
 zeroprint withdraw &lt;eth&gt; --to &lt;0x…&gt;      <span class="c">// private withdraw through a relayer</span>

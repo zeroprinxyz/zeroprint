@@ -5,20 +5,20 @@ const ROOT = `${HOME}/shadepool`;
 const NODE = `${HOME}/.nvm/versions/node/v22.23.3/bin/node`;
 const readEnv = (p) =>
   Object.fromEntries(fs.readFileSync(p, "utf8").split("\n").filter(Boolean).map((l) => l.split(/=(.*)/s).slice(0, 2)));
-const secrets = readEnv(`${ROOT}/shade/mainnet/secrets.env`);
-const footprint = readEnv(`${ROOT}/shade/footprint.env`);
+const secrets = readEnv(`${ROOT}/zeroprint/mainnet/secrets.env`);
+const footprint = readEnv(`${ROOT}/zeroprint/footprint.env`);
 const RPC_URL = "http://127.0.0.1:8547"; // our own RH node
 module.exports = {
   apps: [
     {
       name: "zeroprint-keeper",
-      cwd: `${ROOT}/shade/asp`,
+      cwd: `${ROOT}/zeroprint/asp`,
       script: "keeper.mjs",
       interpreter: NODE,
       env: {
         RPC_URL,
         DEPLOYMENT: `${ROOT}/packages/contracts/deployments/zeroprint-4663.json`,
-        DATA_DIR: `${ROOT}/shade/asp/mainnet`,
+        DATA_DIR: `${ROOT}/zeroprint/asp/mainnet`,
         POLL_SEC: "20",
         PORT: "8946",
         KEEPER_PK: secrets.POSTMAN_PK,
@@ -26,14 +26,14 @@ module.exports = {
     },
     {
       name: "zeroprint-relayer",
-      cwd: `${ROOT}/shade/relayer`,
+      cwd: `${ROOT}/zeroprint/relayer`,
       script: "start.mjs",
       interpreter: NODE,
-      env: { CONFIG_PATH: `${ROOT}/shade/relayer/mainnet/config.json`, SHADE_RELAYER_PORT: "8945" },
+      env: { CONFIG_PATH: `${ROOT}/zeroprint/relayer/mainnet/config.json`, SHADE_RELAYER_PORT: "8945" },
     },
     {
       name: "zeroprint-ui",
-      cwd: `${ROOT}/shade/ui`,
+      cwd: `${ROOT}/zeroprint/ui`,
       script: "server.mjs",
       interpreter: NODE,
       env: {
@@ -43,9 +43,10 @@ module.exports = {
         ASP_URL: "http://127.0.0.1:8946",
         RELAYER_URL: "http://127.0.0.1:8945",
         ...footprint,
-        UI_CONFIG: `${ROOT}/shade/ui/mainnet.config.json`,
-        TLS_CERT: `${ROOT}/shade/local/tls/cert.pem`,
-        TLS_KEY: `${ROOT}/shade/local/tls/key.pem`,
+        UI_CONFIG: `${ROOT}/zeroprint/ui/mainnet.config.json`,
+        FOOTPRINT_LIMIT: "off", // no per-visitor scan limit for now; remove this line to restore it
+        TLS_CERT: `${ROOT}/zeroprint/local/tls/cert.pem`,
+        TLS_KEY: `${ROOT}/zeroprint/local/tls/key.pem`,
       },
     },
   ],

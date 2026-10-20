@@ -10,7 +10,7 @@ import { createShade, settle } from "../ui/src/core.js";
 const HOME = process.env.HOME;
 const deployment = JSON.parse(fs.readFileSync(`${HOME}/shadepool/packages/contracts/deployments/shade-31337.json`, "utf8"));
 const keys = Object.fromEntries(
-  fs.readFileSync(`${HOME}/shadepool/shade/local/anvil-keys.txt`, "utf8").trim().split("\n").map((l) => {
+  fs.readFileSync(`${HOME}/shadepool/zeroprint/local/anvil-keys.txt`, "utf8").trim().split("\n").map((l) => {
     const [i, , pk] = l.split(" ");
     return [i, pk];
   }),

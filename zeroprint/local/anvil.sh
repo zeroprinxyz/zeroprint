@@ -6,5 +6,5 @@ exec $HOME/.foundry/bin/anvil \
   --hardfork cancun \
   --block-base-fee-per-gas 10000000 --gas-price 10000000 --disable-min-priority-fee \
   --accounts 10 --balance 1000 \
-  --state $HOME/shadepool/shade/local/anvil-state.json \
+  --state $HOME/shadepool/zeroprint/local/anvil-state.json \
   --state-interval 30

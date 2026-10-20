@@ -672,6 +672,31 @@ body.app .card {
   color: var(--muted);
   font-size: 13px;
 }
+.fp-src {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  opacity: 0.75;
+  font-size: 11.5px;
+}
+.fp-limits {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.fp-limits summary {
+  cursor: pointer;
+  color: var(--text);
+}
+.fp-limits ul {
+  margin: 8px 0 2px;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
 .fp-first {
   margin-top: 18px;
 }

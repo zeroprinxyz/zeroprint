@@ -1,5 +1,6 @@
 // ZeroPrint UI server: serves the static build and proxies /rpc, /asp, /relayer on the same
 // origin so the page's CSP can be connect-src 'self'. No analytics, no third parties, no logs of bodies.
+import { createHash, randomBytes } from "node:crypto";
 import fs from "node:fs";
 import http from "node:http";
 import https from "node:https";
@@ -381,10 +382,10 @@ async function handle(req, res) {
   }
 
   if (p === "/footprint-api/trace" && req.method === "GET") {
-    // The tracer limits traces per IP; pass the visitor's address so the investigator's own
-    // background traces never use up a visitor's allowance.
+    // The tracer limits traces per visitor; it gets a scrambled, daily-changing ID instead of
+    // the IP, and the investigator's own background traces never use up a visitor's allowance.
     const r = await fetch(TRACER_URL + "/trace" + url.search, {
-      headers: { "x-forwarded-for": visitorIp(req) },
+      headers: { "x-forwarded-for": visitorId(req) },
       signal: AbortSignal.timeout(180_000),
     });
     let body = await r.text();
@@ -445,6 +446,16 @@ const tls = process.env.TLS_CERT
 (tls ? https.createServer(tls, onRequest) : http.createServer(onRequest)).listen(PORT, HOST, () =>
   console.log(`ZeroPrint UI on ${tls ? "https" : "http"}://${HOST}:${PORT}`),
 );
+
+// A visitor's IP never leaves this process: rate limits see a salted hash, and the salt is
+// replaced every day, so yesterday's IDs can't be matched to today's.
+let salt = { key: randomBytes(32), at: Date.now() };
+function visitorId(req) {
+  // FOOTPRINT_LIMIT=off: a new ID per scan, so the tracer's per-visitor limit never applies
+  if (process.env.FOOTPRINT_LIMIT === "off") return `v-${randomBytes(8).toString("hex")}`;
+  if (Date.now() - salt.at > 86_400_000) salt = { key: randomBytes(32), at: Date.now() };
+  return `v-${createHash("sha256").update(salt.key).update(visitorIp(req)).digest("hex").slice(0, 16)}`;
+}
 
 // Behind the public reverse proxy every request comes from the proxy; only then trust its
 // X-Forwarded-For, so each visitor keeps their own tracer allowance.

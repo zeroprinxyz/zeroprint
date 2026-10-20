@@ -16,4 +16,4 @@ node_modules
 
 # build cache
 *.tsbuildinfo
-shade/relayer/*/relayer.sqlite
+zeroprint/relayer/*/relayer.sqlite

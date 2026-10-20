@@ -43,11 +43,11 @@ cat > ../relayer/testnet/config.json <<JSON
     "native_currency": { "name": "Ether", "symbol": "ETH", "decimals": 18 },
     "supported_assets": [{ "asset_address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", "asset_name": "Ether", "fee_bps": "0", "min_withdraw_amount": "1000000000000000" }]
   }],
-  "sqlite_db_path": "$ROOT/shade/relayer/testnet/relayer.sqlite",
+  "sqlite_db_path": "$ROOT/zeroprint/relayer/testnet/relayer.sqlite",
   "cors_allow_all": false,
   "allowed_domains": ["https://127.0.0.1:8930"]
 }
 JSON
 umask 022
 jq -n --argjson d "$(cat $DEP)" --arg dep "$DEPLOYER_ADDRESS" '{chainName:"Robinhood Chain Testnet", walletRpc:"https://rpc.testnet.chain.robinhood.com", explorer:"https://explorer.testnet.chain.robinhood.com", delaySec:1800, deployer:$dep, origin:"https://127.0.0.1:8930", deployment:$d}' > ../ui/testnet.config.json
-echo "configs written; start with: pm2 start ~/shadepool/shade/testnet.config.cjs"
+echo "configs written; start with: pm2 start ~/shadepool/zeroprint/testnet.config.cjs"

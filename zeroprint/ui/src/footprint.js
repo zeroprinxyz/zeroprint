@@ -91,24 +91,28 @@ function exposure(r) {
   const privacy = by("privacy").length;
   const findings = [];
   if (cex.length)
-    findings.push(["high", `Linked to ${cex.length === 1 ? "an exchange" : `${cex.length} exchanges`}: ${cex.map(esc).join(", ")}`, "Exchanges keep identity (KYC) records, so this wallet can be tied to a person."]);
+    findings.push(["high", `Linked to ${cex.length === 1 ? "an exchange" : `${cex.length} exchanges`}: ${cex.map(esc).join(", ")}`, "Exchanges keep identity (KYC) records, so this wallet can be tied to a person.", "Source: on-chain transfers to or from addresses labelled as that exchange"]);
   if (wallets.size)
-    findings.push(["mid", `${wallets.size} direct wallet link${wallets.size > 1 ? "s" : ""}`, "Anyone can follow these transfers to other wallets and group them as one owner."]);
-  if (bridges.length)
-    findings.push(["mid", `${bridges.length} bridge hop${bridges.length > 1 ? "s" : ""}`, "Bridges connect this wallet to its addresses on other chains."]);
+    findings.push(["mid", `${wallets.size} direct wallet link${wallets.size > 1 ? "s" : ""}`, "Anyone can follow these transfers to other wallets and group them as one owner.", "Source: on-chain transfers"]);
+  if (bridges.length) {
+    const n = (s) => bridges.filter((l) => l.proof?.status === s).length;
+    const proof = [[n("verified"), "verified on-chain"], [n("api"), "bridge API only"], [n("likely"), "likely match"]].filter(([k]) => k).map(([k, t]) => `${k} ${t}`).join(", ");
+    findings.push(["mid", `${bridges.length} bridge hop${bridges.length > 1 ? "s" : ""}`, "Bridges connect this wallet to its addresses on other chains.", `Source: bridge APIs, re-checked on both chains${proof ? ` (${proof})` : ""}`]);
+  }
   const ff = r.firstFunder;
   if (ff?.kind === "bridge")
-    findings.push(["mid", `Funded via ${ff.via ?? "a"} bridge from ${ff.from?.chainName ?? "another chain"}`, "The first money came over a bridge; Footprint links both sides of the bridge transfer."]);
+    findings.push(["mid", `Funded via ${ff.via ?? "a"} bridge from ${ff.from?.chainName ?? "another chain"}`, "The first money came over a bridge; Footprint links both sides of the bridge transfer.", "Source: the wallet's first incoming transfer"]);
   if (services.length) {
     const top = services.reduce((a, b) => (b.serviceTx > a.serviceTx ? b : a));
     findings.push([
       "mid",
       `${services.length === 1 ? "A busy service wallet" : `${services.length} busy service wallets`} on the trail`,
       `${Number(top.serviceTx).toLocaleString("en-US")}${top.serviceTxAtLeast ? "+" : ""} transactions: likely an exchange, bridge solver or payment service. Its money is pooled, so the trail stops there.`,
+      "Source: the counterparty's on-chain transaction count",
     ]);
   }
-  if (privacy) findings.push(["low", `${privacy} privacy-pool transfer${privacy > 1 ? "s" : ""}`, "These links are broken on-chain; the pool hides which deposit is whose."]);
-  if (!legs.length) findings.push(["low", "No public money trail found", "Nothing in or out on the scanned chains yet."]);
+  if (privacy) findings.push(["low", `${privacy} privacy-pool transfer${privacy > 1 ? "s" : ""}`, "These links are broken on-chain; the pool hides which deposit is whose.", "Source: transfers with known privacy-pool contracts"]);
+  if (!legs.length) findings.push(["low", "No public money trail found", "Nothing in or out on the scanned chains yet.", "Source: the chains listed above"]);
   const level = findings.some((f) => f[0] === "high") ? "high" : findings.some((f) => f[0] === "mid") ? "mid" : "low";
   return { level, findings, total: legs.length };
 }
@@ -295,10 +299,11 @@ function renderLaunches(out, j, state) {
   const others = fs.filter((f) => f.kind === "launched" && f.path.length > 1).length;
   const bundle = fs.find((f) => f.kind === "bundle" && f.creator !== norm(j.address));
   const msgs = [];
-  if (me) msgs.push([`Launched ${me.total} token${me.total > 1 ? "s" : ""}`, "Every launch is public and tied to this wallet as its creator."]);
-  if (others) msgs.push([`${others} wallet${others > 1 ? "s" : ""} on this money trail launched tokens`, "Up to two hops away, through transfers or bridges, on this chain or another."]);
-  if (bundle) msgs.push([`Linked to the ${bundle.symbol ? `$${bundle.symbol}` : ""} launch`, "Wallets linked to this one bought it right at launch, a bundle pattern."]);
-  for (const [t, d] of msgs.reverse()) box.insertAdjacentHTML("afterbegin", `<div class="fp-find lv-high launch"><i></i><div><b>${esc(t)}</b><p>${esc(d)}</p></div></div>`);
+  if (me) msgs.push([`Launched ${me.total} token${me.total > 1 ? "s" : ""}`, "Every launch is public and tied to this wallet as its creator.", "Source: token creation transactions"]);
+  if (others) msgs.push([`${others} wallet${others > 1 ? "s" : ""} on this money trail launched tokens`, "Up to two hops away, through transfers or bridges, on this chain or another.", "Source: on-chain transfers, then token creation transactions"]);
+  if (bundle) msgs.push([`Linked to the ${bundle.symbol ? `$${bundle.symbol}` : ""} launch`, "Wallets linked to this one bought it right at launch, a bundle pattern.", "Source: buys in the token's first blocks, from wallets linked by transfers"]);
+  for (const [t, d, src] of msgs.reverse())
+    box.insertAdjacentHTML("afterbegin", `<div class="fp-find lv-high launch"><i></i><div><b>${esc(t)}</b><p>${esc(d)}</p><small class="fp-src">${esc(src)}</small></div></div>`);
 }
 
 /** A token contract or mint has no money trail of its own: say what it is and who made it. */
@@ -415,6 +420,20 @@ function moneyMap(r) {
     </div>`;
 }
 
+/** What a scan cannot show, so nobody reads "nothing found" as "nothing there". */
+function limits(r) {
+  const items = [
+    r.capped && "This wallet is busy: only its most recent transactions were read, so older links may be missing.",
+    r.partial?.length && `${r.partial.join(", ")} did not answer this time; those links may be missing.`,
+    "Inside an exchange: deposits and withdrawals are linked in its private records (KYC), not on-chain.",
+    "Privacy pools and mixers: which deposit paid which withdrawal is hidden by design.",
+    "Busy service wallets (exchanges, bridge solvers, payment services) pool many people's money, so the trail stops there.",
+    "Cash, OTC and peer-to-peer trades, and transfers on chains or bridges not listed above.",
+    "Off-chain links: reused usernames, IP addresses, the same habits on two wallets.",
+  ].filter(Boolean);
+  return `<details class="fp-limits"><summary>What Footprint can't see</summary><ul>${items.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></details>`;
+}
+
 function report(r) {
   const x = exposure(r);
   const flags = [
@@ -439,9 +458,10 @@ function report(r) {
     ${r.partial?.length ? `<div class="note warn">Some sources didn't answer this time: ${r.partial.map(esc).join(", ")}. The rest is below.</div>` : ""}
     <div id="fpToken"></div>
     <div class="fp-findings">${x.findings
-      .map(([lv, t, d]) => `<div class="fp-find lv-${lv}"><i></i><div><b>${t}</b><p>${esc(d)}</p></div></div>`)
+      .map(([lv, t, d, src]) => `<div class="fp-find lv-${lv}"><i></i><div><b>${t}</b><p>${esc(d)}</p>${src ? `<small class="fp-src">${esc(src)}</small>` : ""}</div></div>`)
       .join("")}</div>
     <div id="fpLaunches"></div>
+    ${limits(r)}
     <div class="fp-viz">
       <div class="fp-vtabs" role="tablist">
         <button class="on" data-v="map">Money map</button>
@@ -473,6 +493,7 @@ export function viewFootprint(el, params) {
       <button class="btn" type="submit">Scan</button>
     </form>
     <p class="fp-fine">Chains: Robinhood, Ethereum, BNB Chain, Base, Solana. Bridges: Relay, Across, Robinhood Bridge, deBridge, Stargate/LayerZero, each hop re-checked on both chains. Testnets are not scanned.</p>
+    <p class="fp-fine">Not logged: no accounts, no analytics, no access logs. Rate limits use a scrambled ID of your IP that changes daily, never the IP itself. Results (public chain data) are cached for up to 6 hours so repeat scans are fast.</p>
     <div id="fpOut"></div>`;
   const input = el.querySelector("#fpAddr");
   const clear = el.querySelector("#fpClear");
@@ -490,7 +511,14 @@ export function viewFootprint(el, params) {
   };
   if (!addr) return;
   const out = el.querySelector("#fpOut");
-  out.innerHTML = `<div class="fp-busy"><span class="spin"></span>Scanning ${esc(short(addr))}: reading the chains and the bridges…</div>`;
+  out.innerHTML = `<div class="fp-busy"><span class="spin"></span><span>Scanning ${esc(short(addr))}: reading the chains and the bridges… <b id="fpSecs">0 s</b></span></div>`;
+  const t0 = Date.now();
+  const tick = setInterval(() => {
+    const el = out.querySelector("#fpSecs");
+    if (!el) return clearInterval(tick);
+    const s = Math.round((Date.now() - t0) / 1000);
+    el.textContent = s < 20 ? `${s} s` : `${s} s · busy wallets and new scans can take up to a minute`;
+  }, 1000);
   fetch(`/footprint-api/trace?addr=${encodeURIComponent(addr)}&chain=${encodeURIComponent(chain)}`)
     .then(async (r) => {
       const j = await r.json().catch(() => ({}));

@@ -42,7 +42,8 @@ export function createInvestigator({ tracerUrl, alchemyKey, rhDb, scanSolCreator
   async function trace(addr) {
     if (traceCache.has(addr)) return traceCache.get(addr);
     const p = fetch(`${tracerUrl}/trace?addr=${encodeURIComponent(addr)}&chain=auto`, {
-      headers: { "x-forwarded-for": "shadepool-investigator" },
+      // FOOTPRINT_LIMIT=off: a new ID per trace, so the tracer's per-visitor limit never applies
+      headers: { "x-forwarded-for": process.env.FOOTPRINT_LIMIT === "off" ? `inv-${Math.random().toString(36).slice(2)}` : "shadepool-investigator" },
       signal: AbortSignal.timeout(120_000),
     })
       .then((r) => (r.ok ? r.json() : null))

@@ -43,7 +43,7 @@ except the relayer for private withdrawals.
 git clone https://github.com/zeroprinxyz/zeroprint && cd zeroprint
 yarn install --ignore-scripts
 yarn workspace @0xbow/privacy-pools-core-sdk build
-node shade/cli/zeroprint.mjs status
+node zeroprint/cli/zeroprint.mjs status
 ```
 
 ```
@@ -59,7 +59,7 @@ options: --network mainnet|testnet, --rpc <url>, --relayer <url>
 
 - `packages/` upstream Privacy Pools monorepo: contracts (plus `src/zeroprint/ZeroPrintASP.sol`),
   circuits, SDK, relayer.
-- `shade/` ZeroPrint: web app and server (`ui/`), CLI (`cli/`), ASP keeper (`asp/`), relayer
+- `zeroprint/` ZeroPrint: web app and server (`ui/`), CLI (`cli/`), ASP keeper (`asp/`), relayer
   launcher, deploy scripts, end-to-end tests.
 - `brand/` logo files.
 
