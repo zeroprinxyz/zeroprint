@@ -3,6 +3,9 @@ import "./landing.css";
 import { startShade } from "./bgfx.js";
 import { cipher, crowd, merkle, runScene } from "./scenes.js";
 import { createPublicClient, formatEther, http, keccak256, toHex } from "viem";
+import { mountMobileNav } from "./mnav.js";
+
+mountMobileNav();
 
 const $ = (s) => document.querySelector(s);
 // Each section has its own background that scrolls with it

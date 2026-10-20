@@ -5,6 +5,9 @@ import { startShade } from "./bgfx.js";
 import { boot } from "./boot.js";
 import { createShade, settle } from "./core.js";
 import { forgetKey, hasStoredKey, saveKey, unlockKey } from "./keystore.js";
+import { mountMobileNav } from "./mnav.js";
+
+mountMobileNav();
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
