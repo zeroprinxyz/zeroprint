@@ -49,6 +49,9 @@ function toast(msg, bad = false) {
 const errMsg = (e) => e?.shortMessage || e?.details || e?.message || String(e);
 
 // ---------- wallet ----------
+function addrLink(a) {
+  return cfg.explorer ? `<a class="mono" href="${cfg.explorer}/address/${a}" target="_blank" rel="noreferrer">${a}</a>` : a;
+}
 function txLink(hash) {
   return cfg.explorer ? `<a href="${cfg.explorer}/tx/${hash}" target="_blank" rel="noreferrer">${short(hash)}</a>` : `<span class="mono">${short(hash)}</span>`;
 }
@@ -544,11 +547,11 @@ async function viewVerify(el) {
     <p class="sub">Don't trust us. Check.</p>
     <h3>Contracts (${esc(cfg.chainName)}, chain ${d.chainId})</h3>
     <dl class="kv">
-      <dt>Entrypoint</dt><dd>${d.entrypoint}</dd>
-      <dt>ETH pool</dt><dd>${d.pool}</dd>
-      <dt>Withdrawal verifier</dt><dd>${d.withdrawalVerifier}</dd>
-      <dt>Ragequit verifier</dt><dd>${d.ragequitVerifier}</dd>
-      <dt>ASP postman</dt><dd>${d.postman}</dd>
+      <dt>Entrypoint</dt><dd>${addrLink(d.entrypoint)}</dd>
+      <dt>ETH pool</dt><dd>${addrLink(d.pool)}</dd>
+      <dt>Withdrawal verifier</dt><dd>${addrLink(d.withdrawalVerifier)}</dd>
+      <dt>Ragequit verifier</dt><dd>${addrLink(d.ragequitVerifier)}</dd>
+      ${d.asp ? `<dt>ZeroPrintASP</dt><dd>${addrLink(d.asp)}</dd><dt>Guardian</dt><dd>${addrLink(d.guardian)}</dd>` : `<dt>ASP postman</dt><dd>${addrLink(d.postman)}</dd>`}
     </dl>
     <h3>Live checks</h3>
     <dl class="kv" id="live"><dt>…</dt><dd>checking</dd></dl>

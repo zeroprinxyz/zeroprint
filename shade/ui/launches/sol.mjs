@@ -7,6 +7,8 @@ import { createSolRpc } from "./solrpc.mjs";
 export const PUMP = "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P";
 const LAUNCHLAB = "LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj";
 const DBC = "dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN";
+const METAPLEX = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
+const TOKEN_PROGRAMS = new Set(["TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", "TokenzQdBNbLqP5VEhdkAS6EHFLC1PQuWZ3GkmToKdmA"]);
 export const disc = (name) => createHash("sha256").update(`event:${name}`).digest().subarray(0, 8).toString("hex");
 const D_CREATE = disc("CreateEvent");
 const D_POOL_CREATE = disc("PoolCreateEvent");
@@ -117,6 +119,14 @@ export function createSolScanner(sol) {
       const meta = allIxs(tx).find((i) => i.parsed?.type === "initializeTokenMetadata" && i.parsed.info?.mint === mint)?.parsed.info;
       found.push({ chain: "solana", token: mint, name: meta?.name ?? "", symbol: meta?.symbol ?? "", launchpad: "Meteora DBC", ts, tx: sig });
     }
+    // A token minted directly (SPL mint + Metaplex metadata, no launchpad), paid for by the wallet.
+    // Decimals 0 is an NFT, not a token. Name and symbol are filled in by scan().
+    if (!found.length && tx.transaction?.message?.accountKeys?.[0]?.pubkey === creator) {
+      const ixs = allIxs(tx);
+      const init = ixs.find((i) => TOKEN_PROGRAMS.has(i.programId) && /^initializeMint2?$/.test(i.parsed?.type ?? ""));
+      if (init?.parsed.info.decimals > 0 && ixs.some((i) => i.programId === METAPLEX))
+        found.push({ chain: "solana", token: init.parsed.info.mint, name: "", symbol: "", launchpad: "SPL token", ts, tx: sig });
+    }
     return found;
   }
 
@@ -126,6 +136,11 @@ export function createSolScanner(sol) {
     const launches = [];
     const txs = await solRpc.transactions(sigs);
     txs.forEach((tx, i) => tx && launches.push(...decode(tx, sigs[i], creator)));
+    for (const l of launches.filter((x) => !x.name && x.token)) {
+      const meta = (await solRpc.call("getAsset", { id: l.token }).catch(() => null))?.content?.metadata;
+      l.name = meta?.name ?? "";
+      l.symbol = meta?.symbol ?? "";
+    }
     const seen = new Set();
     return {
       scanned: sigs.length,

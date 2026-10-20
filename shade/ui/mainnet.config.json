@@ -1,7 +1,7 @@
 {
   "chainName": "Robinhood Chain",
   "walletRpc": "https://rpc.mainnet.chain.robinhood.com",
-  "explorer": "https://robinhoodchain.blockscout.com",
+  "explorer": "https://robin.etherscan.io",
   "delaySec": 1800,
   "deployer": "0xa6a46FeAb42dEaaD2072B751c6741c752E93b7d7",
   "origin": "https://zeroprint.xyz",

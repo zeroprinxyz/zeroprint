@@ -63,6 +63,6 @@ cat > $ROOT/shade/relayer/mainnet/config.json <<JSON
 JSON
 umask 022
 jq -n --argjson d "$(cat $DEP)" --arg dep "$DEPLOYER_ADDRESS" --argjson w "$WINDOW" \
-  '{chainName:"Robinhood Chain", walletRpc:"https://rpc.mainnet.chain.robinhood.com", explorer:"https://robinhoodchain.blockscout.com", delaySec:$w, deployer:$dep, origin:"https://127.0.0.1:8940", networks:{mainnet:"https://127.0.0.1:8940", testnet:"https://127.0.0.1:8930"}, deployment:$d}' \
+  '{chainName:"Robinhood Chain", walletRpc:"https://rpc.mainnet.chain.robinhood.com", explorer:"https://robin.etherscan.io", delaySec:$w, deployer:$dep, origin:"https://127.0.0.1:8940", networks:{mainnet:"https://127.0.0.1:8940", testnet:"https://127.0.0.1:8930"}, deployment:$d}' \
   > $ROOT/shade/ui/mainnet.config.json
 echo "configs written; start with: pm2 start ~/shadepool/shade/mainnet.config.cjs"
