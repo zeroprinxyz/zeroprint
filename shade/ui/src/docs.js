@@ -19,10 +19,13 @@ fetch("/config.json", { cache: "no-store" })
       ["ETH pool", link(d.pool)],
       ["Withdrawal verifier", link(d.withdrawalVerifier)],
       ["Ragequit verifier", link(d.ragequitVerifier)],
-      ["ASP postman", link(d.postman)],
+      ...(d.asp ? [["ZeroPrintASP (postman)", link(d.asp)], ["Guardian", link(d.guardian)]] : [["ASP postman", link(d.postman)]]),
       ["Owner", d.ownerRenounced ? "Renounced" : "—"],
     ];
-    $("#addrRows").innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td><td class="muted">Not deployed</td></tr>`).join("");
+    $("#addrRows").innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
+    const other = cfg.chainName.includes("Testnet") ? ["mainnet", "Mainnet"] : ["testnet", "Testnet"];
+    const url = cfg.networks?.[other[0]];
+    if (url) $("#otherNet").innerHTML = `${other[1]} addresses: <a href="${esc(url)}/docs#networks">${esc(url.replace(/^https?:\/\//, ""))}</a>.`;
   })
   .catch(() => {});
 

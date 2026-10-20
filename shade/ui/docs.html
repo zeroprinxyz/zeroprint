@@ -42,12 +42,13 @@
           <a href="#checklist">Privacy checklist</a>
           <a href="#footprint">Footprint</a>
           <a href="#trouble">Troubleshooting</a>
+          <a href="#cli">Command-line tool</a>
           <h4>Developers</h4>
           <a href="#arch">Architecture</a>
           <a href="#networks">Networks &amp; contracts</a>
           <a href="#circuits">Circuits &amp; trusted setup</a>
           <a href="#contracts">Contract interface</a>
-          <a href="#asp-api">ASP API</a>
+          <a href="#asp-contract">ASP contract</a>
           <a href="#relayer-api">Relayer API</a>
           <a href="#limits">Fees &amp; limits</a>
           <a href="#verify">Verify a deployment</a>
@@ -55,7 +56,7 @@
           <a href="#trust">Trust model</a>
           <a href="#audits">Audits</a>
           <a href="#risks">Risks</a>
-          <a href="#mainnet">Mainnet readiness</a>
+          <a href="#status">Status</a>
           <h4>Resources</h4>
           <a href="#glossary">Glossary</a>
           <a href="#legal">Legal &amp; risk notice</a>
@@ -68,9 +69,9 @@
           <p class="eyebrow">Introduction</p>
           <h1>What is ZeroPrint?</h1>
           <p class="lede">ZeroPrint is a zero-knowledge privacy pool for ETH on Robinhood Chain. You deposit from one wallet and later withdraw to a fresh wallet, and nobody on-chain can tell which deposit paid for which withdrawal.</p>
-          <p>It runs on the open-source, audited <a href="https://github.com/0xbow-io/privacy-pools-core" target="_blank" rel="noreferrer">Privacy Pools</a> protocol by 0xbow (Apache-2.0). ZeroPrint deploys those contracts without an owner, runs an Association Set Provider that keeps stolen funds out, and gives you an app where every secret stays in your browser.</p>
+          <p>It runs on the open-source, audited <a href="https://github.com/0xbow-io/privacy-pools-core" target="_blank" rel="noreferrer">Privacy Pools</a> protocol by 0xbow (Apache-2.0). ZeroPrint deploys those contracts without an owner, adds an on-chain Association Set Provider that keeps stolen funds out, and gives you an app and a command-line tool where every secret stays on your device.</p>
           <div class="callout">
-            <b>Status.</b> ZeroPrint is live on <b>Robinhood Chain Testnet</b> only. It is not deployed on mainnet. See <a href="#mainnet">Mainnet readiness</a>.
+            <b>Status.</b> ZeroPrint is live on <b>Robinhood Chain mainnet</b>, with a free <a href="https://testnet.zeroprint.xyz">testnet</a> to try it first. ZeroPrint's own contract and app are not audited yet: start with small amounts. See <a href="#status">Status</a>.
           </div>
         </section>
 
@@ -100,13 +101,15 @@
         <section id="asp">
           <h2>Clean funds: the ASP</h2>
           <p>A plain mixer lets hackers hide stolen money among honest users. Privacy Pools adds an <b>Association Set Provider (ASP)</b>: a list of deposits that passed screening. Your withdrawal proof also proves your deposit is on that list, still without saying which one it is.</p>
+          <p>On ZeroPrint the ASP is a contract, <code>ZeroPrintASP</code>, and it is the only address allowed to publish the approved set. No server decides who gets in:</p>
           <ul>
-            <li>Each deposit waits <b>30 minutes</b>, so hacks can be reported first.</li>
-            <li>The depositor address is checked against the <b>OFAC sanctions list</b> and a ZeroPrint blocklist of known scam and trap wallets on Robinhood Chain.</li>
-            <li>Clean deposits are approved automatically. The ASP publishes the approved set's Merkle root on-chain and the full list over a public API.</li>
-            <li>If a depositor is listed <i>after</i> approval, the deposit is removed from the set and can only ragequit.</li>
+            <li><b>Queue.</b> Each deposit is queued on-chain, which starts a <b>30-minute window</b> so hacks can be reported first. Anyone can queue; ZeroPrint's keeper does it automatically.</li>
+            <li><b>Screen.</b> Inside the window, a <b>guardian</b> can deny the deposit. ZeroPrint's keeper denies depositors on the <b>OFAC sanctions list</b> and on a ZeroPrint blocklist of known scam and trap wallets on Robinhood Chain. The guardian can do nothing else, and nothing after the window.</li>
+            <li><b>Approve.</b> After the window, <b>anyone</b> can approve the deposit: the contract adds it to its Merkle tree and posts the new root to the Entrypoint. The keeper does this automatically.</li>
+            <li><b>Final.</b> An approval cannot be revoked; the set only grows.</li>
           </ul>
-          <p>The app downloads the <b>whole</b> list and checks it locally against the on-chain root, so the ASP never learns which deposit a visitor owns.</p>
+          <div class="callout"><b>If the keeper is offline,</b> your deposit still gets approved: queue it in <a href="/app">the app</a> or with the <a href="#cli">CLI</a>, wait 30 minutes, then approve it yourself. Do this from the <b>wallet that made the deposit</b>, never from a fresh wallet, or you link the two.</div>
+          <p>The app rebuilds the whole set from the contract's events and checks it against the on-chain root, so nobody learns which deposit a visitor owns.</p>
         </section>
 
         <section id="ragequit">
@@ -124,7 +127,7 @@
             <li>Click <b>Connect wallet</b>. The app adds and switches to the right network.</li>
             <li>Create a <b>Zero Key</b> (next section).</li>
           </ol>
-          <div class="callout">On testnet, get test ETH from the Robinhood Chain Testnet faucet. Test ETH has no value.</div>
+          <div class="callout">Mainnet uses real ETH. To try everything first, use the <a href="https://testnet.zeroprint.xyz">testnet</a> with free test ETH from the Robinhood Chain Testnet faucet.</div>
         </section>
 
         <section id="key">
@@ -153,7 +156,7 @@
           <ol>
             <li>In <b>My deposits</b>, pick an approved deposit and click <b>Withdraw privately</b>.</li>
             <li>Enter the amount and a <b>fresh</b> recipient address that has never been used.</li>
-            <li>The app shows the relayer fee (gas only). Click <b>Generate proof &amp; withdraw</b>.</li>
+            <li>The app shows the relayer fee (currently none: ZeroPrint's relayer pays the gas). Click <b>Generate proof &amp; withdraw</b>.</li>
             <li>Your browser builds the proof (a few seconds), the relayer submits it, and the recipient receives the ETH. The recipient needs no gas.</li>
           </ol>
           <p>You don't need to connect a wallet to withdraw; nothing is signed.</p>
@@ -193,8 +196,10 @@
             <dd>The ASP just published a new root. Wait a minute and try again.</dd>
             <dt>"This deposit is not approved by the ASP (yet)"</dt>
             <dd>Check the countdown in My deposits. Denied deposits can only ragequit.</dd>
+            <dt>My deposit still says "waiting" long after 30 minutes</dt>
+            <dd>The keeper may be offline. Approve it yourself in My deposits, from the wallet that made the deposit, or with the <a href="#cli">CLI</a>.</dd>
             <dt>The relayer fee is above the 0.5% cap</dt>
-            <dd>Gas is too high relative to the amount. Withdraw a larger amount.</dd>
+            <dd>The pool never lets a relayer take more than 0.5%. Use another relayer or withdraw a larger amount.</dd>
             <dt>Ragequit fails with OnlyOriginalDepositor</dt>
             <dd>Connect the exact wallet that made the deposit.</dd>
             <dt>My deposits are missing</dt>
@@ -204,31 +209,48 @@
           </dl>
         </section>
 
+        <section id="cli">
+          <h2>Command-line tool</h2>
+          <p>Everything the app does also works from a terminal, without this website: list your deposits, approve them yourself, withdraw privately or ragequit. Proofs are made on your computer; your Zero Key is read from the terminal and never stored. Needs Node.js 22 and Yarn.</p>
+<pre class="code"><code>git clone https://github.com/zeroprinxyz/zeroprint && cd zeroprint
+yarn install --ignore-scripts
+yarn workspace @0xbow/privacy-pools-core-sdk build
+node shade/cli/zeroprint.mjs status</code></pre>
+<pre class="code"><code>zeroprint status                         <span class="c">// list your deposits</span>
+zeroprint approve                        <span class="c">// queue/approve your deposits (depositing wallet's key)</span>
+zeroprint withdraw &lt;eth&gt; --to &lt;0x…&gt;      <span class="c">// private withdraw through a relayer</span>
+zeroprint withdraw &lt;eth&gt; --direct        <span class="c">// no relayer: your wallet sends it and pays the gas</span>
+zeroprint ragequit [--deposit N]         <span class="c">// public exit back to the depositing wallet</span>
+<span class="c">// options: --network mainnet|testnet, --rpc &lt;url&gt;, --relayer &lt;url&gt;</span></code></pre>
+          <p><b>If this website goes away.</b> Your funds live in the contracts, not on our servers. With your 12 words and the CLI you can still find your deposits, approve them from the depositing wallet, and withdraw through any relayer (<code>--relayer</code>) or on your own (<code>--direct</code>; use a fresh wallet funded from somewhere unlinked). Ragequit needs nothing but the contract.</p>
+        </section>
+
         <!-- ============ DEVELOPERS ============ -->
         <section id="arch">
           <p class="eyebrow">Developers</p>
           <h2>Architecture</h2>
-<pre class="code"><code>browser: app + Privacy Pools SDK (keys, proofs: all local)
-   │  /rpc (read-only allow-list)   /asp/*   /relayer/*   /footprint-api/*
+<pre class="code"><code>browser app / CLI + Privacy Pools SDK (keys, proofs: all local)
+   │  /rpc (read-only allow-list)   /relayer/*   /asp/stats   /footprint-api/*
    ▼
 ZeroPrint web server (static files, strict CSP, same-origin proxies)
    ├─► chain RPC
-   ├─► ASP service      screens deposits, posts association-set roots
-   └─► relayer          pays gas, submits Entrypoint.relay()
+   └─► relayer          submits Entrypoint.relay(), pays the gas
+keeper (guardian key)   queues, screens and approves deposits on ZeroPrintASP
 chain: Entrypoint (proxy, owner renounced) → PrivacyPoolSimple (ETH)
-                                            → WithdrawalVerifier, CommitmentVerifier</code></pre>
-          <p>The contracts and circuits are upstream Privacy Pools, unmodified. ZeroPrint adds a deploy script that renounces the owner, the ASP service, the relayer configuration and the app.</p>
+                                            → WithdrawalVerifier, CommitmentVerifier
+       ZeroPrintASP (the Entrypoint's only ASP postman) → posts association-set roots</code></pre>
+          <p>The pool contracts and circuits are upstream Privacy Pools, unmodified. ZeroPrint adds the <code>ZeroPrintASP</code> contract, a deploy script that renounces the owner, the keeper, a relayer launcher, the app and the CLI. All of it is <a href="https://github.com/zeroprinxyz/zeroprint" target="_blank" rel="noreferrer">open source</a>.</p>
         </section>
 
         <section id="networks">
           <h2>Networks &amp; contracts</h2>
           <div class="tbl">
             <table>
-              <thead><tr><th>Contract</th><th id="netName">Robinhood Chain Testnet</th><th>Mainnet</th></tr></thead>
+              <thead><tr><th>Contract</th><th id="netName">Robinhood Chain</th></tr></thead>
               <tbody id="addrRows"></tbody>
             </table>
           </div>
-          <p class="fine">Addresses are read from the running deployment. Mainnet has no deployment yet.</p>
+          <p class="fine">Addresses are read from this site's deployment and verified on Sourcify. <span id="otherNet"></span></p>
         </section>
 
         <section id="circuits">
@@ -259,26 +281,31 @@ event Ragequit(address indexed ragequitter, uint256 commitment, uint256 label, u
           <p>A withdrawal proof must use one of the pool's last 64 state roots and the <b>latest</b> ASP root.</p>
         </section>
 
-        <section id="asp-api">
-          <h2>ASP API</h2>
-          <p>Public, read-only, JSON. Base path <code>/asp</code>.</p>
-          <div class="tbl">
-            <table>
-              <thead><tr><th>Endpoint</th><th>Returns</th></tr></thead>
-              <tbody>
-                <tr><td><code>GET /asp/set</code></td><td><code>{ root, cid, labels[], updatedAt }</code>: the approved labels in tree order. Rebuild the LeanIMT and compare its root with <code>Entrypoint.latestRoot()</code>.</td></tr>
-                <tr><td><code>GET /asp/pending</code></td><td><code>[{ label, eta }]</code>: deposits waiting, with the unix time they become eligible.</td></tr>
-                <tr><td><code>GET /asp/denied</code></td><td><code>[{ label, reason }]</code></td></tr>
-                <tr><td><code>GET /asp/stats</code></td><td><code>{ chainId, delaySec, deposits, approved, pending, denied, lastBlock }</code></td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p>Each posted root carries a CIDv1 (raw, sha2-256) of the set document <code>{ v, root, labels }</code>.</p>
+        <section id="asp-contract">
+          <h2>ASP contract</h2>
+          <p><code>ZeroPrintASP</code> is the only address with the Entrypoint's ASP postman role. Labels come from the pool's <code>Deposited</code> events.</p>
+<pre class="code"><code>function queue(uint256 label);                        <span class="c">// anyone: starts the window</span>
+function queueMany(uint256[] labels);                 <span class="c">// skips unknown or queued labels</span>
+function deny(uint256 label, string reason);          <span class="c">// guardian only, inside the window</span>
+function approve(uint256[] labels) returns (uint256); <span class="c">// anyone, after the window; posts the root</span>
+function status(uint256 label) view returns (Status); <span class="c">// None, Waiting, Ready, Approved, Denied</span>
+function isApproved(uint256 label) view returns (bool);
+function root() view returns (uint256);
+function size() view returns (uint256);
+function guardian() view returns (address);           <span class="c">// address(0) once renounced</span>
+function WINDOW() view returns (uint256);             <span class="c">// 1800 seconds</span>
+function transferGuardian(address to);                <span class="c">// guardian only</span>
+function renounceGuardian();                          <span class="c">// guardian only, for good</span>
+event Queued(uint256 indexed label, address indexed depositor, uint256 at);
+event Denied(uint256 indexed label, string reason);
+event Approved(uint256 indexed label, uint256 index);
+event RootPosted(uint256 root, uint256 size);</code></pre>
+          <p>The approved set is the <code>Approved</code> events in index order; rebuild the LeanIMT (Poseidon) from them and compare with <code>Entrypoint.latestRoot()</code>. The "CID" posted with each root is the root's own 64 hex digits, since the set lives on-chain. The keeper also serves read-only counts at <code>GET /asp/stats</code>.</p>
         </section>
 
         <section id="relayer-api">
           <h2>Relayer API</h2>
-          <p>The unmodified Privacy Pools relayer. Base path <code>/relayer</code>.</p>
+          <p>The Privacy Pools relayer, configured to charge only its base fee (currently 0) and pay the gas itself. Base path <code>/relayer</code>.</p>
           <div class="tbl">
             <table>
               <thead><tr><th>Endpoint</th><th>Purpose</th></tr></thead>
@@ -298,10 +325,10 @@ event Ragequit(address indexed ragequitter, uint256 commitment, uint256 label, u
             <table>
               <tbody>
                 <tr><td>Protocol / vetting fee</td><td>0%</td></tr>
-                <tr><td>Relayer fee</td><td>Gas cost only, capped on-chain at 0.5%</td></tr>
+                <tr><td>Relayer fee</td><td>0 (the relayer pays the gas); capped on-chain at 0.5%</td></tr>
                 <tr><td>Minimum deposit</td><td>0.001 ETH</td></tr>
                 <tr><td>Minimum relayed withdrawal</td><td>0.001 ETH</td></tr>
-                <tr><td>ASP waiting time</td><td>30 minutes (an ASP setting, not a contract rule)</td></tr>
+                <tr><td>ASP window</td><td>30 minutes, fixed in <code>ZeroPrintASP</code></td></tr>
                 <tr><td>Asset</td><td>ETH only</td></tr>
               </tbody>
             </table>
@@ -315,7 +342,7 @@ event Ragequit(address indexed ragequitter, uint256 commitment, uint256 label, u
             <li>Open the Entrypoint on the explorer and call <code>hasRole(keccak256("OWNER_ROLE"), deployer)</code>: it must be <code>false</code>.</li>
             <li>Check the <code>RoleRevoked</code> event from the deploy transaction.</li>
             <li>Compare the verifier bytecode with the upstream build of <code>WithdrawalVerifier</code> and <code>CommitmentVerifier</code>.</li>
-            <li>Fetch <code>/asp/set</code>, rebuild the LeanIMT with Poseidon and compare with <code>latestRoot()</code>.</li>
+            <li>Read <code>ZeroPrintASP</code>'s <code>Approved</code> events, rebuild the LeanIMT with Poseidon and compare with <code>latestRoot()</code>. Check that only the ASP contract holds <code>ASP_POSTMAN</code>.</li>
             <li>In the app, open DevTools → Network during a withdrawal: the only outgoing payload is the proof, amount and recipient. The <a href="/app#verify">Verify page</a> runs the live checks for you.</li>
           </ol>
         </section>
@@ -328,8 +355,8 @@ event Ragequit(address indexed ragequitter, uint256 commitment, uint256 label, u
             <table>
               <thead><tr><th>Party</th><th>Can</th><th>Cannot</th></tr></thead>
               <tbody>
-                <tr><td>ZeroPrint team</td><td>Run the ASP, relayer and website</td><td>Upgrade, pause or drain the contracts; see your keys</td></tr>
-                <tr><td>ASP (postman key)</td><td>Approve or deny deposits for private withdrawal</td><td>Move or freeze funds (ragequit always works)</td></tr>
+                <tr><td>ZeroPrint team</td><td>Run the keeper, relayer and website</td><td>Upgrade, pause or drain the contracts; see your keys</td></tr>
+                <tr><td>Guardian (keeper key)</td><td>Deny a deposit for private withdrawal, inside its 30-minute window</td><td>Approve, revoke, move or freeze funds; act after the window (ragequit always works)</td></tr>
                 <tr><td>Relayer</td><td>See proof, amount, recipient and your IP; refuse to relay</td><td>Change the recipient or fee; link you to a deposit</td></tr>
                 <tr><td>Website</td><td>Serve the app code</td><td>Read your Zero Key, unless the served code is malicious; see <a href="#risks">Risks</a></td></tr>
                 <tr><td>Sequencer</td><td>Delay or censor transactions</td><td>Forge proofs or steal funds</td></tr>
@@ -342,15 +369,15 @@ event Ragequit(address indexed ragequitter, uint256 commitment, uint256 label, u
           <h2>Audits</h2>
           <ul>
             <li><b>Privacy Pools core</b> (contracts, circuits, Entrypoint upgrade): audited by Oxorio and Auditware. Reports are in the upstream repository's <code>audit/</code> folder.</li>
-            <li><b>ZeroPrint additions</b> (deploy script, ASP service, app): <b>not audited yet</b>. An audit is a requirement before mainnet.</li>
+            <li><b>ZeroPrint additions</b> (<code>ZeroPrintASP</code>, deploy script, keeper, app, CLI): <b>not audited yet</b>. They are tested (contract tests, end-to-end runs, testnet and mainnet smoke tests), but start with small amounts.</li>
           </ul>
         </section>
 
         <section id="risks">
           <h2>Risks</h2>
           <ul>
-            <li><b>Smart contract or circuit bugs</b> could lose funds. Mitigation: unmodified audited code, deposit caps at launch, bug bounty.</li>
-            <li><b>Malicious front-end.</b> A compromised website could steal Zero Keys. Mitigation: strict CSP, no third-party scripts, reproducible builds and an IPFS mirror (planned).</li>
+            <li><b>Smart contract or circuit bugs</b> could lose funds. Mitigation: the pool is unmodified audited code; <code>ZeroPrintASP</code> is small and tested but not audited.</li>
+            <li><b>Malicious front-end.</b> A compromised website could steal Zero Keys. Mitigation: strict CSP, no third-party scripts, open-source code and a CLI that needs no website; reproducible builds and an IPFS mirror are planned.</li>
             <li><b>Losing your Zero Key</b> loses your funds. Nobody can recover it.</li>
             <li><b>Small anonymity set.</b> Privacy depends on how many others use the pool.</li>
             <li><b>Censorship.</b> The sequencer could delay withdrawals; ragequit and direct contract calls remain.</li>
@@ -358,23 +385,23 @@ event Ragequit(address indexed ragequitter, uint256 commitment, uint256 label, u
           </ul>
         </section>
 
-        <section id="mainnet">
-          <h2>Mainnet readiness</h2>
-          <p>ZeroPrint will not deploy to mainnet until every item below is done. Current status:</p>
+        <section id="status">
+          <h2>Status</h2>
+          <p>Live on Robinhood Chain mainnet since 20 October 2026.</p>
           <ul class="status">
-            <li class="done">Unmodified audited contracts and circuits</li>
-            <li class="done">Owner renounced at deploy, verified on-chain</li>
-            <li class="done">ASP screening with OFAC + blocklist, revocation, public set API</li>
+            <li class="done">Unmodified audited pool contracts and circuits</li>
+            <li class="done">Owner renounced at deploy, verified on-chain; contracts verified on Sourcify</li>
+            <li class="done">On-chain ASP: 30-minute guardian window, OFAC + blocklist screening, approval by anyone</li>
             <li class="done">Browser-side proofs, encrypted Zero Key, restore from 12 words</li>
-            <li class="done">End-to-end test with real proofs; live testnet</li>
-            <li>Public testnet period with outside users</li>
-            <li>Independent audit of ZeroPrint's deploy script, ASP and app</li>
-            <li>Hardware or multisig postman key</li>
-            <li>Relayer minimum fee and multiple relayers</li>
+            <li class="done">Command-line tool that works without the website</li>
+            <li class="done">End-to-end tests, live testnet, mainnet smoke test</li>
+            <li class="done">Open-source code</li>
+            <li>Independent audit of ZeroPrintASP, keeper and app</li>
+            <li>Hardware or multisig guardian key</li>
+            <li>More relayers and a relayer fee policy</li>
             <li>IPFS front-end mirror and reproducible builds</li>
-            <li>Command-line withdrawal tool (works without the website)</li>
+            <li>Bug bounty</li>
             <li>Legal review for the jurisdictions served</li>
-            <li>Bug bounty and deposit caps for launch</li>
           </ul>
         </section>
 
@@ -397,7 +424,7 @@ event Ragequit(address indexed ragequitter, uint256 commitment, uint256 label, u
 
         <section id="legal">
           <h2>Legal &amp; risk notice</h2>
-          <p>ZeroPrint is experimental, open-source software provided as is, without warranty. It is currently deployed on a test network only. ZeroPrint is non-custodial: the team never holds user funds or keys. Do not use ZeroPrint to hide the proceeds of crime; deposits linked to sanctioned or stolen funds are denied private withdrawal. You are responsible for complying with the laws that apply to you. Nothing here is financial or legal advice.</p>
+          <p>ZeroPrint is experimental, open-source software provided as is, without warranty. It runs on Robinhood Chain mainnet and testnet. ZeroPrint is non-custodial: the team never holds user funds or keys. Do not use ZeroPrint to hide the proceeds of crime; deposits from sanctioned or blocklisted wallets are denied private withdrawal. You are responsible for complying with the laws that apply to you. Nothing here is financial or legal advice.</p>
           <p class="fine">ZeroPrint is built on Privacy Pools by 0xbow, licensed under Apache-2.0.</p>
         </section>
 

@@ -24,3 +24,4 @@ relayer/mainnet/
 asp/testnet-zp/
 mainnet/smoke-zero-key.txt
 relayer/testnet-zp/
+mainnet/smoke-fresh-key.txt

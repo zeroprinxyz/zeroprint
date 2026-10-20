@@ -495,8 +495,10 @@ function viewWithdraw(el) {
       const tooHigh = BigInt(q.feeBPS) > max;
       $("#quote").className = `note ${tooHigh ? "bad" : "good"}`;
       $("#quote").innerHTML = tooHigh
-        ? `Gas would cost ${(Number(q.feeBPS) / 100).toFixed(2)}% of this amount, above the pool's ${Number(max) / 100}% cap. Withdraw a larger amount.`
-        : `Relayer fee ${(Number(q.feeBPS) / 100).toFixed(2)}% (gas only, ${eth(fee, 6)} ETH). Recipient gets <b>${eth(amount - fee, 6)} ETH</b>.`;
+        ? `The relayer asks ${(Number(q.feeBPS) / 100).toFixed(2)}% of this amount, above the pool's ${Number(max) / 100}% cap. Withdraw a larger amount or use another relayer.`
+        : fee === 0n
+          ? `No relayer fee: the relayer pays the gas. Recipient gets <b>${eth(amount, 6)} ETH</b>.`
+          : `Relayer fee ${(Number(q.feeBPS) / 100).toFixed(2)}% (${eth(fee, 6)} ETH). Recipient gets <b>${eth(amount - fee, 6)} ETH</b>.`;
       $("#go").disabled = tooHigh;
     } catch (e) {
       $("#quote").className = "note bad";

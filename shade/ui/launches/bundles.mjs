@@ -48,8 +48,11 @@ export function createBundleScanner(sol) {
       const name = str();
       const symbol = str();
       str();
-      o += 32 * 3; // mint, bonding curve, user
-      const creator = bs58(b.subarray(o, o + 32));
+      o += 32 * 2; // mint, bonding curve
+      const user = bs58(b.subarray(o, o + 32));
+      o += 32;
+      // pump.fun added `creator` in 2025; older CreateEvents end at `user`, who is the creator
+      const creator = o + 32 <= b.length ? bs58(b.subarray(o, o + 32)) : user;
       return { name, symbol, creator, ts: tx.blockTime ?? null };
     }
     return null; // created before the history we read, or not a pump.fun token

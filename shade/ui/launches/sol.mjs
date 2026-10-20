@@ -91,8 +91,9 @@ export function createSolScanner(sol) {
           r.str(); // uri
           const mint = r.pk();
           r.pk(); // bonding curve
-          r.pk(); // user
-          const who = r.pk();
+          const user = r.pk();
+          // pump.fun added `creator` in 2025; older CreateEvents end at `user`, who is the creator
+          const who = r.o + 32 <= buf.length ? r.pk() : user;
           if (who === creator) found.push({ chain: "solana", token: mint, name, symbol, launchpad: "pump.fun", ts, tx: sig });
         } else if (prog === LAUNCHLAB && tag === D_POOL_CREATE) {
           const r = new Reader(buf);
