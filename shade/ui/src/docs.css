@@ -1,0 +1,252 @@
+body.docs {
+  background:
+    radial-gradient(800px 400px at 80% -10%, rgba(124, 231, 208, 0.07), transparent 60%),
+    var(--bg);
+}
+.docs-tag {
+  font-style: normal;
+  font-size: 12px;
+  padding: 2px 8px;
+  margin-left: 6px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  vertical-align: middle;
+}
+.menu-btn {
+  display: none;
+  padding: 8px 12px;
+}
+.docs-shell {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.docs-side {
+  position: sticky;
+  top: 69px;
+  align-self: start;
+  height: calc(100vh - 69px);
+  overflow-y: auto;
+  padding: 24px 16px 40px;
+  border-right: 1px solid var(--line);
+}
+.docs-search {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.docs-side h4 {
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 18px 0 6px;
+}
+.docs-side a {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  border-left: 2px solid transparent;
+}
+.docs-side a:hover {
+  color: var(--text);
+  background: var(--card);
+}
+.docs-side a.on {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: rgba(124, 231, 208, 0.06);
+}
+.docs-side .hide {
+  display: none;
+}
+.docs-main {
+  padding: 36px clamp(16px, 4vw, 56px) 60px;
+  max-width: 860px;
+}
+.docs-main section {
+  padding: 8px 0 26px;
+  scroll-margin-top: 84px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+}
+.docs-main h1 {
+  font-size: clamp(30px, 5vw, 42px);
+  letter-spacing: -0.8px;
+  margin: 4px 0 12px;
+}
+.docs-main h2 {
+  font-size: 24px;
+  letter-spacing: -0.3px;
+  margin: 6px 0 12px;
+}
+.docs-main p,
+.docs-main li,
+.docs-main dd {
+  color: #c3ccd9;
+  line-height: 1.7;
+}
+.docs-main li {
+  margin: 4px 0;
+}
+.docs-main b {
+  color: var(--text);
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent) !important;
+  margin: 0;
+}
+.lede {
+  font-size: 18px;
+  color: var(--text) !important;
+}
+.callout {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(124, 231, 208, 0.3);
+  background: rgba(124, 231, 208, 0.06);
+  color: #d6f5ee;
+}
+.flow li {
+  margin-bottom: 10px;
+}
+.ticks {
+  list-style: none;
+  padding: 0;
+}
+.ticks li {
+  position: relative;
+  padding-left: 26px;
+}
+.ticks li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+.status {
+  list-style: none;
+  padding: 0;
+}
+.status li {
+  position: relative;
+  padding-left: 28px;
+}
+.status li::before {
+  content: "○";
+  position: absolute;
+  left: 2px;
+  color: var(--warn);
+}
+.status li.done::before {
+  content: "●";
+  color: var(--good);
+}
+.qa dt {
+  font-weight: 600;
+  margin-top: 14px;
+  color: var(--text);
+}
+.qa dd {
+  margin: 4px 0 0;
+}
+.tbl {
+  overflow-x: auto;
+  margin: 12px 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.tbl table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.tbl th,
+.tbl td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.tbl tr:last-child td {
+  border-bottom: 0;
+}
+.tbl th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  background: var(--bg2);
+}
+.tbl td {
+  color: #c3ccd9;
+}
+.tbl td a.mono {
+  font-size: 12.5px;
+  word-break: break-all;
+}
+.muted {
+  color: var(--muted) !important;
+}
+.fine {
+  font-size: 13px;
+  color: var(--muted) !important;
+}
+.docs-main pre.code {
+  position: relative;
+  margin: 14px 0;
+}
+pre.code .copy {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 9px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--muted);
+  font: 11px var(--mono);
+  cursor: pointer;
+}
+.docs-foot {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 8px;
+}
+.docs-foot a {
+  text-decoration: none;
+}
+@media (max-width: 900px) {
+  .docs-shell {
+    grid-template-columns: 1fr;
+  }
+  .menu-btn {
+    display: inline-flex;
+  }
+  .docs-side {
+    position: fixed;
+    top: 69px;
+    left: 0;
+    width: min(300px, 86vw);
+    z-index: 20;
+    background: var(--bg);
+    transform: translateX(-100%);
+    transition: transform 0.25s;
+    border-right: 1px solid var(--line);
+  }
+  .docs-side.open {
+    transform: none;
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "mainnet": {
+    "name": "Robinhood Chain",
+    "rpc": "https://rpc.mainnet.chain.robinhood.com",
+    "relayer": "https://zeroprint.xyz/relayer",
+    "deployment": {
+      "asp": "0x696559CF37C88554b95b0794a11E6746E5374039",
+      "aspWindow": 1800,
+      "chainId": 4663,
+      "entrypoint": "0xc4F56c7141A1E434046f12a373d864deD34196a7",
+      "entrypointImpl": "0x5947756Dc25E7F166C2532FF2BE1D5e8D8A0c54C",
+      "guardian": "0x6DC0Cee5b3cCdd0E1c383456BB8Bb15F32e85Aa8",
+      "ownerRenounced": true,
+      "pool": "0xeD680b003F98581b6345D76bc309CB70584aC230",
+      "postman": "0x696559CF37C88554b95b0794a11E6746E5374039",
+      "ragequitVerifier": "0x66B6D5087e7Ebdd2D47DF21e7629bE00Fbf9e7e5",
+      "scope": "17639193659100516330184882451217390948922014702858316540741403982202439567145",
+      "startBlock": 93531207,
+      "withdrawalVerifier": "0xCDd54090ff44273aA6503d4e2cAb05390463422D"
+    }
+  },
+  "testnet": {
+    "name": "Robinhood Chain Testnet",
+    "rpc": "https://rpc.testnet.chain.robinhood.com",
+    "relayer": "https://testnet.zeroprint.xyz/relayer",
+    "deployment": {
+      "asp": "0x56b96Be0E7d6B8620C93Fd330Ff523dE7774D6da",
+      "aspWindow": 1800,
+      "chainId": 46630,
+      "entrypoint": "0x552C548E598645a2f1fbD7c125ac8caaFb87cde5",
+      "entrypointImpl": "0x30d88554621Cf09d8c6299C3C28b073869620A71",
+      "guardian": "0x017848588fC6539077b28B52f07C3c11c137C71E",
+      "ownerRenounced": true,
+      "pool": "0xE0fBe8068c802D696FCcC3aE1eAaF8634E39d923",
+      "postman": "0x56b96Be0E7d6B8620C93Fd330Ff523dE7774D6da",
+      "ragequitVerifier": "0x58ecEaf1EFE23b8338C4750fCB1eaCE16567F750",
+      "scope": "13010523421264816566341688276429459162436640388197061639648688333857732262658",
+      "startBlock": 139449535,
+      "withdrawalVerifier": "0xaEFa95076e52310aefE7e6E5b35EEA05153CD62e"
+    }
+  },
+  "local": {
+    "name": "ZeroPrint Local",
+    "rpc": "http://127.0.0.1:8923",
+    "relayer": "http://127.0.0.1:8925/relayer",
+    "deployment": {
+      "asp": "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
+      "aspWindow": 60,
+      "chainId": 31337,
+      "entrypoint": "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
+      "entrypointImpl": "0x59b670e9fA9D0A427751Af201D676719a970857b",
+      "guardian": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+      "ownerRenounced": true,
+      "pool": "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
+      "postman": "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
+      "ragequitVerifier": "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d",
+      "scope": "19892051820964332181639367152731721363006355256048185045357539228550004841311",
+      "startBlock": 29,
+      "withdrawalVerifier": "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c"
+    }
+  }
+}

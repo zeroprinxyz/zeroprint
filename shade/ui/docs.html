@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZeroPrint Docs</title>
+    <meta name="description" content="ZeroPrint documentation: how the privacy pool works, user guide, contracts, APIs, circuits and security model." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="docs">
+    <header class="top">
+      <a class="back" href="/" title="Back to home" aria-label="Back to home"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" /></svg></a>
+      <a class="brand" href="/">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><use href="#logo" /></svg>
+        <span>Zero<b>Print</b> <i class="docs-tag">Docs</i></span>
+      </a>
+      <nav class="lnav">
+        <a href="/">Home</a>
+        <a href="/footprint">Footprint</a>
+        <a href="/app#verify">Verify</a>
+      </nav>
+      <a class="gh" href="https://github.com/zeroprinxyz/zeroprint" target="_blank" rel="noreferrer" title="Source code on GitHub" aria-label="Source code on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" /></svg></a>
+      <button class="btn ghost menu-btn" id="menuBtn" aria-label="Contents">☰</button>
+      <a class="btn" href="/app">Launch App →</a>
+    </header>
+
+    <div class="docs-shell">
+      <aside class="docs-side" id="side">
+        <input id="q" class="docs-search" placeholder="Search the docs…" autocomplete="off" />
+        <nav id="toc">
+          <h4>Introduction</h4>
+          <a href="#what">What is ZeroPrint</a>
+          <a href="#why">Why privacy matters</a>
+          <a href="#how">How it works</a>
+          <a href="#asp">Clean funds: the ASP</a>
+          <a href="#ragequit">Ragequit</a>
+          <h4>User guide</h4>
+          <a href="#start">Getting started</a>
+          <a href="#key">Your Zero Key</a>
+          <a href="#deposit">Depositing</a>
+          <a href="#withdraw">Withdrawing privately</a>
+          <a href="#checklist">Privacy checklist</a>
+          <a href="#footprint">Footprint</a>
+          <a href="#trouble">Troubleshooting</a>
+          <h4>Developers</h4>
+          <a href="#arch">Architecture</a>
+          <a href="#networks">Networks &amp; contracts</a>
+          <a href="#circuits">Circuits &amp; trusted setup</a>
+          <a href="#contracts">Contract interface</a>
+          <a href="#asp-api">ASP API</a>
+          <a href="#relayer-api">Relayer API</a>
+          <a href="#limits">Fees &amp; limits</a>
+          <a href="#verify">Verify a deployment</a>
+          <h4>Security</h4>
+          <a href="#trust">Trust model</a>
+          <a href="#audits">Audits</a>
+          <a href="#risks">Risks</a>
+          <a href="#mainnet">Mainnet readiness</a>
+          <h4>Resources</h4>
+          <a href="#glossary">Glossary</a>
+          <a href="#legal">Legal &amp; risk notice</a>
+        </nav>
+      </aside>
+
+      <main class="docs-main" id="doc">
+        <!-- ============ INTRODUCTION ============ -->
+        <section id="what">
+          <p class="eyebrow">Introduction</p>
+          <h1>What is ZeroPrint?</h1>
+          <p class="lede">ZeroPrint is a zero-knowledge privacy pool for ETH on Robinhood Chain. You deposit from one wallet and later withdraw to a fresh wallet, and nobody on-chain can tell which deposit paid for which withdrawal.</p>
+          <p>It runs on the open-source, audited <a href="https://github.com/0xbow-io/privacy-pools-core" target="_blank" rel="noreferrer">Privacy Pools</a> protocol by 0xbow (Apache-2.0). ZeroPrint deploys those contracts without an owner, runs an Association Set Provider that keeps stolen funds out, and gives you an app where every secret stays in your browser.</p>
+          <div class="callout">
+            <b>Status.</b> ZeroPrint is live on <b>Robinhood Chain Testnet</b> only. It is not deployed on mainnet. See <a href="#mainnet">Mainnet readiness</a>.
+          </div>
+        </section>
+
+        <section id="why">
+          <h2>Why privacy matters</h2>
+          <p>A blockchain is a public ledger. The moment someone links your name to one address (an exchange withdrawal, an ENS name, a payment to a friend), they can read:</p>
+          <ul>
+            <li>your balance, today and at any time in the past;</li>
+            <li>every payment you made and received, and with whom;</li>
+            <li>your other wallets, by following the money between them.</li>
+          </ul>
+          <p>That is the equivalent of publishing your bank statement. ZeroPrint breaks the on-chain link between an old, known wallet and a new one, so the new one starts clean.</p>
+        </section>
+
+        <section id="how">
+          <h2>How it works</h2>
+          <p>Picture a box full of sealed envelopes, each holding the same kind of coin. When you put an envelope in, you keep a secret that only fits your envelope. Later you prove to the box, with math, that <em>one</em> of the envelopes is yours, without pointing at which one, and it pays you out to any address you name.</p>
+          <ol class="flow">
+            <li><b>Deposit.</b> Your browser creates a secret and a nullifier from your Zero Key and sends only their hash, the <i>commitment</i>, with your ETH. The commitment joins a public Merkle tree of all deposits.</li>
+            <li><b>Wait.</b> The ASP screens the deposit (about 30 minutes). Others deposit too. Every approved deposit is part of your <i>anonymity set</i>.</li>
+            <li><b>Withdraw.</b> Your browser builds a Groth16 proof that says: <i>"I know the secret of some commitment in the pool tree, its deposit is in the approved set, and here is its nullifier hash."</i> The relayer submits it; the contract checks the proof, records the nullifier so the note can't be spent twice, and pays the recipient.</li>
+          </ol>
+          <p>The nullifier hash and the commitment are different hashes of different inputs, so no one can connect them. The proof reveals the amount, the recipient and the nullifier hash, and nothing else.</p>
+          <p><b>Partial withdrawals.</b> You can withdraw part of a deposit. The proof creates a new hidden note for the rest (same deposit lineage), which you can withdraw later.</p>
+        </section>
+
+        <section id="asp">
+          <h2>Clean funds: the ASP</h2>
+          <p>A plain mixer lets hackers hide stolen money among honest users. Privacy Pools adds an <b>Association Set Provider (ASP)</b>: a list of deposits that passed screening. Your withdrawal proof also proves your deposit is on that list, still without saying which one it is.</p>
+          <ul>
+            <li>Each deposit waits <b>30 minutes</b>, so hacks can be reported first.</li>
+            <li>The depositor address is checked against the <b>OFAC sanctions list</b> and a ZeroPrint blocklist of known scam and trap wallets on Robinhood Chain.</li>
+            <li>Clean deposits are approved automatically. The ASP publishes the approved set's Merkle root on-chain and the full list over a public API.</li>
+            <li>If a depositor is listed <i>after</i> approval, the deposit is removed from the set and can only ragequit.</li>
+          </ul>
+          <p>The app downloads the <b>whole</b> list and checks it locally against the on-chain root, so the ASP never learns which deposit a visitor owns.</p>
+        </section>
+
+        <section id="ragequit">
+          <h2>Ragequit</h2>
+          <p>If a deposit is denied, still pending, or you simply want out, the <b>original depositing wallet</b> can ragequit: it proves ownership of the note and gets the remaining balance back. This is public (it shows the money returned to the same wallet), but it means the ASP can never freeze or take your funds.</p>
+        </section>
+
+        <!-- ============ USER GUIDE ============ -->
+        <section id="start">
+          <p class="eyebrow">User guide</p>
+          <h2>Getting started</h2>
+          <ol>
+            <li>Install a browser wallet: MetaMask, Rabby or OKX. If you have several, the app lets you choose one.</li>
+            <li>Open the <a href="/app">app</a>. It checks the network, the contracts and the ZK circuits before you start.</li>
+            <li>Click <b>Connect wallet</b>. The app adds and switches to the right network.</li>
+            <li>Create a <b>Zero Key</b> (next section).</li>
+          </ol>
+          <div class="callout">On testnet, get test ETH from the Robinhood Chain Testnet faucet. Test ETH has no value.</div>
+        </section>
+
+        <section id="key">
+          <h2>Your Zero Key</h2>
+          <p>Your Zero Key is 12 words, separate from your wallet's seed. Every deposit's secret and nullifier are derived from it, so these 12 words are the only thing that can withdraw your deposits.</p>
+          <ul>
+            <li><b>Back it up on paper.</b> The app asks you to type two of the words back before you continue.</li>
+            <li><b>In this browser</b> it is stored encrypted with your password (PBKDF2 with 310,000 iterations, then AES-GCM). It is never sent anywhere.</li>
+            <li><b>Restore</b> on any device by pasting the 12 words. The app rescans the chain and rebuilds every deposit.</li>
+            <li><b>Never</b> type it into a site other than ZeroPrint, and never share it. Anyone who has it can withdraw your funds.</li>
+          </ul>
+        </section>
+
+        <section id="deposit">
+          <h2>Depositing</h2>
+          <ol>
+            <li>Unlock your Zero Key and connect your wallet.</li>
+            <li>Enter an amount (minimum 0.001 ETH). Prefer round amounts.</li>
+            <li>Confirm in your wallet. The deposit appears under <b>My deposits</b> with a countdown.</li>
+            <li>After about 30 minutes it shows <b>Approved</b> (or <b>Denied</b> with the reason).</li>
+          </ol>
+        </section>
+
+        <section id="withdraw">
+          <h2>Withdrawing privately</h2>
+          <ol>
+            <li>In <b>My deposits</b>, pick an approved deposit and click <b>Withdraw privately</b>.</li>
+            <li>Enter the amount and a <b>fresh</b> recipient address that has never been used.</li>
+            <li>The app shows the relayer fee (gas only). Click <b>Generate proof &amp; withdraw</b>.</li>
+            <li>Your browser builds the proof (a few seconds), the relayer submits it, and the recipient receives the ETH. The recipient needs no gas.</li>
+          </ol>
+          <p>You don't need to connect a wallet to withdraw; nothing is signed.</p>
+        </section>
+
+        <section id="checklist">
+          <h2>Privacy checklist</h2>
+          <p>The math is solid. Most leaks come from habits. Before you withdraw:</p>
+          <ul class="ticks">
+            <li><b>Wait.</b> Let time pass and let others deposit after you. Withdrawing minutes after depositing narrows the crowd.</li>
+            <li><b>Round amounts.</b> Deposit 0.1, not 0.0937. Withdraw in several parts at different times if your amount is unusual.</li>
+            <li><b>Fresh recipient.</b> Never your depositing wallet, never a wallet you used before.</li>
+            <li><b>Don't fund the recipient yourself.</b> The relayer pays gas; sending gas from your old wallet links them.</li>
+            <li><b>Don't send it back.</b> Moving funds from the new wallet to the old one undoes everything.</li>
+            <li><b>Different behaviour.</b> If the new wallet buys the same rare token at the same time as the old one, it can be matched.</li>
+            <li><b>Network privacy.</b> Your IP is visible to the site and RPCs you use. A VPN or Tor helps.</li>
+          </ul>
+        </section>
+
+        <section id="footprint">
+          <h2>Footprint</h2>
+          <p><a href="/footprint">Footprint</a> is a read-only exposure scan. Paste any wallet and see what an observer sees: where its money came from (exchanges, bridges, other wallets) and where it went, across Robinhood, Ethereum, BNB Chain, Base and Solana. Bridge hops are re-checked on both chains and marked <i>Verified on-chain</i>, <i>Bridge API only</i> or <i>Likely match</i>.</p>
+          <p>Use it before depositing to see what is already linked to you, and after withdrawing to confirm your fresh wallet shows nothing but the pool's relayer. Footprint scans mainnets only.</p>
+          <p><b>Token launches.</b> Footprint follows the money up to two hops from the wallet, across chains, and shows token launches it finds on the way, with the path that links them:</p>
+          <ul>
+            <li>tokens the wallet created itself (Robinhood, Solana pump.fun / LaunchLab / Meteora DBC, Ethereum);</li>
+            <li>tokens created by wallets it funded, was funded by, or bridged to, directly or through one more wallet;</li>
+            <li><b>bundle patterns</b>: two or more linked wallets that bought the same token right at launch (Solana: in its launch block; Robinhood: within 3 blocks), with the token's deployer and, when the deployer is on the trail, how it connects.</li>
+          </ul>
+          <p>Each token links to its contract on the chain's explorer and to GMGN. Nothing is shown when nothing is found. Exchanges, DEXes and privacy pools end a path, because there is no on-chain link through them.</p>
+        </section>
+
+        <section id="trouble">
+          <h2>Troubleshooting</h2>
+          <dl class="qa">
+            <dt>"ASP set does not match the on-chain root yet"</dt>
+            <dd>The ASP just published a new root. Wait a minute and try again.</dd>
+            <dt>"This deposit is not approved by the ASP (yet)"</dt>
+            <dd>Check the countdown in My deposits. Denied deposits can only ragequit.</dd>
+            <dt>The relayer fee is above the 0.5% cap</dt>
+            <dd>Gas is too high relative to the amount. Withdraw a larger amount.</dd>
+            <dt>Ragequit fails with OnlyOriginalDepositor</dt>
+            <dd>Connect the exact wallet that made the deposit.</dd>
+            <dt>My deposits are missing</dt>
+            <dd>Make sure you unlocked the right Zero Key. Restore with your 12 words; the app rescans the chain.</dd>
+            <dt>The wrong wallet extension opens</dt>
+            <dd>Click the wallet button again and pick your wallet from the list.</dd>
+          </dl>
+        </section>
+
+        <!-- ============ DEVELOPERS ============ -->
+        <section id="arch">
+          <p class="eyebrow">Developers</p>
+          <h2>Architecture</h2>
+<pre class="code"><code>browser: app + Privacy Pools SDK (keys, proofs: all local)
+   │  /rpc (read-only allow-list)   /asp/*   /relayer/*   /footprint-api/*
+   ▼
+ZeroPrint web server (static files, strict CSP, same-origin proxies)
+   ├─► chain RPC
+   ├─► ASP service      screens deposits, posts association-set roots
+   └─► relayer          pays gas, submits Entrypoint.relay()
+chain: Entrypoint (proxy, owner renounced) → PrivacyPoolSimple (ETH)
+                                            → WithdrawalVerifier, CommitmentVerifier</code></pre>
+          <p>The contracts and circuits are upstream Privacy Pools, unmodified. ZeroPrint adds a deploy script that renounces the owner, the ASP service, the relayer configuration and the app.</p>
+        </section>
+
+        <section id="networks">
+          <h2>Networks &amp; contracts</h2>
+          <div class="tbl">
+            <table>
+              <thead><tr><th>Contract</th><th id="netName">Robinhood Chain Testnet</th><th>Mainnet</th></tr></thead>
+              <tbody id="addrRows"></tbody>
+            </table>
+          </div>
+          <p class="fine">Addresses are read from the running deployment. Mainnet has no deployment yet.</p>
+        </section>
+
+        <section id="circuits">
+          <h2>Circuits &amp; trusted setup</h2>
+          <ul>
+            <li><b>Proof system:</b> Groth16 over BN254, circuits written in Circom.</li>
+            <li><b>withdraw</b>: proves the existing note's commitment is in the state tree, its label is in the ASP tree, the withdrawn amount fits (128-bit range checks), the new nullifier differs from the old one, and outputs the new commitment hash and the spent nullifier hash. The withdrawal context (recipient, fee data, pool scope) is bound into the proof.</li>
+            <li><b>commitment</b>: used by ragequit; proves knowledge of a note's value, label, nullifier and secret.</li>
+            <li><b>Hashes:</b> commitment = Poseidon(value, label, Poseidon(nullifier, secret)); trees are Lean incremental Merkle trees (Poseidon), max depth 32.</li>
+            <li><b>Trusted setup:</b> proving keys come from the public 0xbow ceremony. The SDK checks the SHA-256 of every circuit file against pinned hashes before using it.</li>
+          </ul>
+        </section>
+
+        <section id="contracts">
+          <h2>Contract interface</h2>
+<pre class="code"><code><span class="c">// Entrypoint</span>
+function deposit(uint256 precommitment) payable returns (uint256 commitment);
+function relay(Withdrawal withdrawal, WithdrawProof proof, uint256 scope);
+function latestRoot() view returns (uint256);          <span class="c">// current ASP root</span>
+function assetConfig(address asset) view returns (pool, minimumDepositAmount, vettingFeeBPS, maxRelayFeeBPS);
+
+<span class="c">// PrivacyPoolSimple (ETH)</span>
+function ragequit(RagequitProof proof);                <span class="c">// original depositor only</span>
+function currentRoot() view returns (uint256);         <span class="c">// state tree root</span>
+event Deposited(address indexed depositor, uint256 commitment, uint256 label, uint256 value, uint256 precommitmentHash);
+event Withdrawn(address indexed processooor, uint256 value, uint256 spentNullifier, uint256 newCommitment);
+event Ragequit(address indexed ragequitter, uint256 commitment, uint256 label, uint256 value);</code></pre>
+          <p>A withdrawal proof must use one of the pool's last 64 state roots and the <b>latest</b> ASP root.</p>
+        </section>
+
+        <section id="asp-api">
+          <h2>ASP API</h2>
+          <p>Public, read-only, JSON. Base path <code>/asp</code>.</p>
+          <div class="tbl">
+            <table>
+              <thead><tr><th>Endpoint</th><th>Returns</th></tr></thead>
+              <tbody>
+                <tr><td><code>GET /asp/set</code></td><td><code>{ root, cid, labels[], updatedAt }</code>: the approved labels in tree order. Rebuild the LeanIMT and compare its root with <code>Entrypoint.latestRoot()</code>.</td></tr>
+                <tr><td><code>GET /asp/pending</code></td><td><code>[{ label, eta }]</code>: deposits waiting, with the unix time they become eligible.</td></tr>
+                <tr><td><code>GET /asp/denied</code></td><td><code>[{ label, reason }]</code></td></tr>
+                <tr><td><code>GET /asp/stats</code></td><td><code>{ chainId, delaySec, deposits, approved, pending, denied, lastBlock }</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Each posted root carries a CIDv1 (raw, sha2-256) of the set document <code>{ v, root, labels }</code>.</p>
+        </section>
+
+        <section id="relayer-api">
+          <h2>Relayer API</h2>
+          <p>The unmodified Privacy Pools relayer. Base path <code>/relayer</code>.</p>
+          <div class="tbl">
+            <table>
+              <thead><tr><th>Endpoint</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td><code>GET /relayer/details?chainId=&amp;assetAddress=</code></td><td>Fee receiver, minimum withdrawal, max gas price.</td></tr>
+                <tr><td><code>POST /relayer/quote</code></td><td><code>{ chainId, amount, asset, recipient }</code> → <code>feeBPS</code> and a signed <code>feeCommitment</code> (valid 60 s) whose <code>withdrawalData</code> you bind into the proof.</td></tr>
+                <tr><td><code>POST /relayer/request</code></td><td><code>{ withdrawal, publicSignals, proof, scope, chainId, feeCommitment }</code> → <code>{ success, txHash }</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The relayer cannot change the recipient or the fee: both are inside the proof's context. At worst it can refuse; use another relayer or submit <code>relay()</code> yourself.</p>
+        </section>
+
+        <section id="limits">
+          <h2>Fees &amp; limits</h2>
+          <div class="tbl">
+            <table>
+              <tbody>
+                <tr><td>Protocol / vetting fee</td><td>0%</td></tr>
+                <tr><td>Relayer fee</td><td>Gas cost only, capped on-chain at 0.5%</td></tr>
+                <tr><td>Minimum deposit</td><td>0.001 ETH</td></tr>
+                <tr><td>Minimum relayed withdrawal</td><td>0.001 ETH</td></tr>
+                <tr><td>ASP waiting time</td><td>30 minutes (an ASP setting, not a contract rule)</td></tr>
+                <tr><td>Asset</td><td>ETH only</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="fine">These parameters were set at deploy and cannot be changed: the owner role that could change them is renounced.</p>
+        </section>
+
+        <section id="verify">
+          <h2>Verify a deployment</h2>
+          <ol>
+            <li>Open the Entrypoint on the explorer and call <code>hasRole(keccak256("OWNER_ROLE"), deployer)</code>: it must be <code>false</code>.</li>
+            <li>Check the <code>RoleRevoked</code> event from the deploy transaction.</li>
+            <li>Compare the verifier bytecode with the upstream build of <code>WithdrawalVerifier</code> and <code>CommitmentVerifier</code>.</li>
+            <li>Fetch <code>/asp/set</code>, rebuild the LeanIMT with Poseidon and compare with <code>latestRoot()</code>.</li>
+            <li>In the app, open DevTools → Network during a withdrawal: the only outgoing payload is the proof, amount and recipient. The <a href="/app#verify">Verify page</a> runs the live checks for you.</li>
+          </ol>
+        </section>
+
+        <!-- ============ SECURITY ============ -->
+        <section id="trust">
+          <p class="eyebrow">Security</p>
+          <h2>Trust model</h2>
+          <div class="tbl">
+            <table>
+              <thead><tr><th>Party</th><th>Can</th><th>Cannot</th></tr></thead>
+              <tbody>
+                <tr><td>ZeroPrint team</td><td>Run the ASP, relayer and website</td><td>Upgrade, pause or drain the contracts; see your keys</td></tr>
+                <tr><td>ASP (postman key)</td><td>Approve or deny deposits for private withdrawal</td><td>Move or freeze funds (ragequit always works)</td></tr>
+                <tr><td>Relayer</td><td>See proof, amount, recipient and your IP; refuse to relay</td><td>Change the recipient or fee; link you to a deposit</td></tr>
+                <tr><td>Website</td><td>Serve the app code</td><td>Read your Zero Key, unless the served code is malicious; see <a href="#risks">Risks</a></td></tr>
+                <tr><td>Sequencer</td><td>Delay or censor transactions</td><td>Forge proofs or steal funds</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="audits">
+          <h2>Audits</h2>
+          <ul>
+            <li><b>Privacy Pools core</b> (contracts, circuits, Entrypoint upgrade): audited by Oxorio and Auditware. Reports are in the upstream repository's <code>audit/</code> folder.</li>
+            <li><b>ZeroPrint additions</b> (deploy script, ASP service, app): <b>not audited yet</b>. An audit is a requirement before mainnet.</li>
+          </ul>
+        </section>
+
+        <section id="risks">
+          <h2>Risks</h2>
+          <ul>
+            <li><b>Smart contract or circuit bugs</b> could lose funds. Mitigation: unmodified audited code, deposit caps at launch, bug bounty.</li>
+            <li><b>Malicious front-end.</b> A compromised website could steal Zero Keys. Mitigation: strict CSP, no third-party scripts, reproducible builds and an IPFS mirror (planned).</li>
+            <li><b>Losing your Zero Key</b> loses your funds. Nobody can recover it.</li>
+            <li><b>Small anonymity set.</b> Privacy depends on how many others use the pool.</li>
+            <li><b>Censorship.</b> The sequencer could delay withdrawals; ragequit and direct contract calls remain.</li>
+            <li><b>Regulatory risk.</b> Rules about privacy tools differ by country and change.</li>
+          </ul>
+        </section>
+
+        <section id="mainnet">
+          <h2>Mainnet readiness</h2>
+          <p>ZeroPrint will not deploy to mainnet until every item below is done. Current status:</p>
+          <ul class="status">
+            <li class="done">Unmodified audited contracts and circuits</li>
+            <li class="done">Owner renounced at deploy, verified on-chain</li>
+            <li class="done">ASP screening with OFAC + blocklist, revocation, public set API</li>
+            <li class="done">Browser-side proofs, encrypted Zero Key, restore from 12 words</li>
+            <li class="done">End-to-end test with real proofs; live testnet</li>
+            <li>Public testnet period with outside users</li>
+            <li>Independent audit of ZeroPrint's deploy script, ASP and app</li>
+            <li>Hardware or multisig postman key</li>
+            <li>Relayer minimum fee and multiple relayers</li>
+            <li>IPFS front-end mirror and reproducible builds</li>
+            <li>Command-line withdrawal tool (works without the website)</li>
+            <li>Legal review for the jurisdictions served</li>
+            <li>Bug bounty and deposit caps for launch</li>
+          </ul>
+        </section>
+
+        <!-- ============ RESOURCES ============ -->
+        <section id="glossary">
+          <p class="eyebrow">Resources</p>
+          <h2>Glossary</h2>
+          <dl class="qa">
+            <dt>Commitment</dt><dd>A hash of your note (value, label, nullifier, secret) stored in the pool tree. Reveals nothing.</dd>
+            <dt>Nullifier</dt><dd>A secret whose hash is published when a note is spent, so it can't be spent twice. Unlinkable to the commitment.</dd>
+            <dt>Label</dt><dd>An ID tied to a deposit and inherited by its change notes; the ASP approves labels.</dd>
+            <dt>Anonymity set</dt><dd>The approved deposits your withdrawal could have come from.</dd>
+            <dt>ASP</dt><dd>Association Set Provider: publishes the set of approved (clean) deposits.</dd>
+            <dt>Ragequit</dt><dd>A public exit that returns a deposit to the wallet that made it.</dd>
+            <dt>Relayer</dt><dd>A service that submits your withdrawal and pays the gas, so the recipient needs no funding.</dd>
+            <dt>Zero Key</dt><dd>Your 12-word phrase that derives all your notes' secrets.</dd>
+            <dt>Groth16</dt><dd>The zero-knowledge proof system used; proofs are small and cheap to verify on-chain.</dd>
+          </dl>
+        </section>
+
+        <section id="legal">
+          <h2>Legal &amp; risk notice</h2>
+          <p>ZeroPrint is experimental, open-source software provided as is, without warranty. It is currently deployed on a test network only. ZeroPrint is non-custodial: the team never holds user funds or keys. Do not use ZeroPrint to hide the proceeds of crime; deposits linked to sanctioned or stolen funds are denied private withdrawal. You are responsible for complying with the laws that apply to you. Nothing here is financial or legal advice.</p>
+          <p class="fine">ZeroPrint is built on Privacy Pools by 0xbow, licensed under Apache-2.0.</p>
+        </section>
+
+        <footer class="docs-foot">
+          <a href="/">← Home</a>
+          <a href="/app">Launch App →</a>
+        </footer>
+      </main>
+    </div>
+
+    <svg class="sprite" width="0" height="0">
+      <symbol id="logo" viewBox="0 0 32 32">
+        <circle cx="16" cy="16" r="13.5" fill="none" stroke="currentColor" stroke-width="2.2" />
+        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M8.6 20.6v-4.1a7.4 7.4 0 0 1 14.8 0v1.7" />
+          <path d="M11.3 22v-5.5a4.7 4.7 0 0 1 9.4 0v3.5" opacity=".68" />
+          <path d="M14 23.4v-6.9a2 2 0 0 1 4 0v5" opacity=".4" />
+        </g>
+      </symbol>
+    </svg>
+    <script type="module" src="/src/docs.js"></script>
+  </body>
+</html>

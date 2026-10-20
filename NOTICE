@@ -1,0 +1,9 @@
+ZeroPrint
+Copyright 2026 ZeroPrint contributors
+
+This product includes software developed by 0xbow as part of Privacy Pools
+(https://github.com/0xbow-io/privacy-pools-core), licensed under the Apache License,
+Version 2.0. The upstream contracts, circuits, SDK and relayer live under packages/.
+ZeroPrint adds the ZeroPrintASP contract (packages/contracts/src/zeroprint/), the web app,
+CLI, ASP keeper and deployment scripts (shade/), and a relayer launcher that charges only the
+configured fee.

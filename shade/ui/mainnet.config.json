@@ -1,0 +1,27 @@
+{
+  "chainName": "Robinhood Chain",
+  "walletRpc": "https://rpc.mainnet.chain.robinhood.com",
+  "explorer": "https://robinhoodchain.blockscout.com",
+  "delaySec": 1800,
+  "deployer": "0xa6a46FeAb42dEaaD2072B751c6741c752E93b7d7",
+  "origin": "https://zeroprint.xyz",
+  "networks": {
+    "mainnet": "https://zeroprint.xyz",
+    "testnet": "https://testnet.zeroprint.xyz"
+  },
+  "deployment": {
+    "asp": "0x696559CF37C88554b95b0794a11E6746E5374039",
+    "aspWindow": 1800,
+    "chainId": 4663,
+    "entrypoint": "0xc4F56c7141A1E434046f12a373d864deD34196a7",
+    "entrypointImpl": "0x5947756Dc25E7F166C2532FF2BE1D5e8D8A0c54C",
+    "guardian": "0x6DC0Cee5b3cCdd0E1c383456BB8Bb15F32e85Aa8",
+    "ownerRenounced": true,
+    "pool": "0xeD680b003F98581b6345D76bc309CB70584aC230",
+    "postman": "0x696559CF37C88554b95b0794a11E6746E5374039",
+    "ragequitVerifier": "0x66B6D5087e7Ebdd2D47DF21e7629bE00Fbf9e7e5",
+    "scope": "17639193659100516330184882451217390948922014702858316540741403982202439567145",
+    "startBlock": 93531207,
+    "withdrawalVerifier": "0xCDd54090ff44273aA6503d4e2cAb05390463422D"
+  }
+}

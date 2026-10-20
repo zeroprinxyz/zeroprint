@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZeroPrint · Know your footprint. Leave zero.</title>
+    <meta name="description" content="Zero-knowledge privacy pool for ETH on Robinhood Chain. Proofs made in your browser, no admin keys, clean-funds screening." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="landing">
+    <div id="wipe" class="wipe"></div>
+    <header class="top">
+      <a class="brand" href="/">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><use href="#logo" /></svg>
+        <span>Zero<b>Print</b></span>
+      </a>
+      <nav class="lnav">
+        <a href="/footprint" class="hot">Footprint</a>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#zk">Technology</a>
+        <a href="#faq">FAQ</a>
+        <a href="/docs">Docs</a>
+      </nav>
+      <a class="gh" href="https://github.com/zeroprinxyz/zeroprint" target="_blank" rel="noreferrer" title="Source code on GitHub" aria-label="Source code on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" /></svg></a>
+      <a class="btn" href="/app">Launch App →</a>
+    </header>
+
+    <section class="l-hero grid-bg scene">
+      <canvas class="sec-fx" id="fx-hero" aria-hidden="true"></canvas>
+      <div class="wrap">
+        <span class="badge"><i></i><span id="net">Robinhood Chain</span></span>
+        <h1>Know your footprint.<br /><span>Leave zero.</span></h1>
+        <p class="lead">
+          Private ETH transfers on Robinhood Chain. See what your wallet gives away, then cut the link: a zero-knowledge proof made in
+          <em>your browser</em> moves your ETH to a fresh wallet that nothing points back from.
+        </p>
+        <div class="row center">
+          <a class="btn big" href="/app">Launch App →</a>
+          <a class="btn ghost big" href="#how">How it works</a>
+        </div>
+        <div class="l-stats">
+          <div><b id="st-set">–</b><span>approved deposits in the crowd</span></div>
+          <div><b id="st-pool">–</b><span>ETH in the pool</span></div>
+          <div><b id="st-admin">0</b><span>admin keys (owner renounced)</span></div>
+          <div><b>0%</b><span>protocol fee</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="l-sec scene">
+      <canvas class="sec-fx" id="fx-crowd" aria-hidden="true"></canvas>
+      <div class="wrap">
+        <h2>What you get</h2>
+        <p class="sub center">Privacy that you can check, built on audited open-source contracts.</p>
+        <div class="cards">
+          <article class="fcard">
+            <div class="ficon">
+              <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z" /><path d="M9.5 12.5 11 14l3.5-3.5" /></svg>
+            </div>
+            <h3>Private withdrawals</h3>
+            <p>Withdraw to any fresh address. A relayer pays the gas, so the new wallet never needs funding from the old one.</p>
+          </article>
+          <article class="fcard">
+            <div class="ficon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="m8.5 12 2.5 2.5 4.5-5" /></svg>
+            </div>
+            <h3>Clean-funds proof</h3>
+            <p>Every deposit is screened against OFAC and known scam wallets. Your proof shows you are in the clean set, so honest users never share a crowd with hackers.</p>
+          </article>
+          <article class="fcard">
+            <div class="ficon">
+              <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 7.5-2" /><path d="m4 4 16 16" /></svg>
+            </div>
+            <h3>No admin keys</h3>
+            <p>The owner role was renounced at deploy. Nobody can upgrade, pause or move funds. Ragequit always returns a deposit to the wallet that made it.</p>
+          </article>
+          <article class="fcard">
+            <div class="ficon">
+              <svg viewBox="0 0 24 24"><path d="M7 3c1.7 0 3 1.6 3 3.6S8.9 11 7.5 11 5 9.3 5 7.2 5.3 3 7 3Z" /><path d="M5.6 13h3.5l-.5 3a1.5 1.5 0 0 1-3 0Z" /><path d="M17 8c-1.7 0-3 1.6-3 3.6s1.1 4.4 2.5 4.4 2.5-1.7 2.5-3.8S18.7 8 17 8Z" /><path d="M18.4 18h-3.5l.5 2a1.5 1.5 0 0 0 3 0Z" /></svg>
+            </div>
+            <h3>Footprint scan</h3>
+            <p>See what anyone can see about a wallet: where its money came from and where it went, across Robinhood, Ethereum, BSC, Base and Solana.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="l-sec alt scene">
+      <canvas class="sec-fx" id="fx-merkle" aria-hidden="true"></canvas>
+      <div class="wrap">
+        <h2>How it works</h2>
+        <p class="sub center">Three steps. The secret part happens on your device.</p>
+        <ol class="steps3">
+          <li>
+            <span class="n">01</span>
+            <h3>Deposit</h3>
+            <p>Create a 12-word Zero Key. Your wallet sends ETH with a commitment derived from it: a hash that hides who can spend it.</p>
+          </li>
+          <li>
+            <span class="n">02</span>
+            <h3>Blend into the crowd</h3>
+            <p>The ASP checks the deposit (about 30 minutes). Meanwhile others deposit too. Everyone approved is your anonymity set.</p>
+          </li>
+          <li>
+            <span class="n">03</span>
+            <h3>Withdraw</h3>
+            <p>Your browser builds a zero-knowledge proof: "I own one of these clean deposits." The relayer submits it to a fresh address.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="zk" class="l-sec scene">
+      <canvas class="sec-fx" id="fx-cipher" aria-hidden="true"></canvas>
+      <div class="wrap split">
+        <div>
+          <h2 class="left">Zero-knowledge, for real</h2>
+          <p class="sub">Not a mock-up. These are the circuits and contracts the pool runs on.</p>
+          <ul class="checks">
+            <li>Groth16 proofs from Circom circuits, audited by Oxorio</li>
+            <li>Trusted-setup keys from the public 0xbow ceremony, hash-checked before use</li>
+            <li>Commitment = Poseidon(value, label, Poseidon(nullifier, secret))</li>
+            <li>Lean incremental Merkle trees for the pool and the clean set</li>
+            <li>Proofs made in the browser: your keys, nullifiers and secrets never leave it</li>
+            <li>Owner role renounced: no upgrades, no pause, no fee switch</li>
+          </ul>
+          <a class="btn ghost" href="/app#verify">Verify it yourself →</a>
+        </div>
+        <pre class="code"><code><span class="c">// packages/circuits/circuits/withdraw.circom (excerpt)</span>
+
+<span class="c">// 3. Your note is somewhere in the pool tree…</span>
+<span class="k">component</span> stateRootChecker = LeanIMTInclusionProof(maxTreeDepth);
+stateRootChecker.leaf &lt;== existingCommitment;
+stateRootChecker.siblings &lt;== stateSiblings;
+stateRoot === stateRootChecker.out;
+
+<span class="c">// 4. …and its deposit is in the clean (ASP) set</span>
+<span class="k">component</span> ASPRootChecker = LeanIMTInclusionProof(maxTreeDepth);
+ASPRootChecker.leaf &lt;== label;
+ASPRootChecker.siblings &lt;== ASPSiblings;
+ASPRoot === ASPRootChecker.out;
+
+<span class="c">// 6. A spent note can never be spent again</span>
+nullifierEqualityCheck.in[0] &lt;== existingNullifier;
+nullifierEqualityCheck.in[1] &lt;== newNullifier;
+nullifierEqualityCheck.out === 0;</code></pre>
+      </div>
+    </section>
+
+    <section class="l-sec alt">
+      <div class="wrap">
+        <h2>What ZeroPrint does not do</h2>
+        <p class="sub center">Honest limits. If a privacy tool promises more, be careful.</p>
+        <div class="cards">
+          <article class="fcard plain">
+            <h3>It doesn't make you invisible</h3>
+            <p>You hide in a crowd. A small pool is a small crowd. Wait, and let others deposit, before you withdraw.</p>
+          </article>
+          <article class="fcard plain">
+            <h3>It doesn't hide amounts</h3>
+            <p>Deposits and withdrawals are public. Depositing 0.3712 and withdrawing 0.3712 is easy to match. Use round amounts.</p>
+          </article>
+          <article class="fcard plain">
+            <h3>It isn't for stolen funds</h3>
+            <p>Flagged deposits are denied. They can only ragequit, publicly, back to the wallet that sent them.</p>
+          </article>
+          <article class="fcard plain">
+            <h3>It can't recover your key</h3>
+            <p>No accounts, no custody. Your 12-word Zero Key is the only way to withdraw. Write it on paper.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="l-sec">
+      <div class="wrap narrow">
+        <h2>FAQ</h2>
+        <details>
+          <summary>Is ZeroPrint custodial?</summary>
+          <p>No. Funds sit in a smart contract with no owner. Only someone holding a note's secret can withdraw it, and only the depositing wallet can ragequit.</p>
+        </details>
+        <details>
+          <summary>Who runs the ASP, and what can it do?</summary>
+          <p>We do. It can approve or deny deposits for private withdrawal. It cannot move or freeze funds: a denied deposit can always ragequit back to its sender.</p>
+        </details>
+        <details>
+          <summary>What if this website goes away?</summary>
+          <p>The contracts keep working without us. Your Zero Key rebuilds your deposits from the chain, and ragequit needs nothing but the contract.</p>
+        </details>
+        <details>
+          <summary>Why wait 30 minutes after depositing?</summary>
+          <p>So hacks can be reported before stolen funds get a private exit, and so more people deposit after you.</p>
+        </details>
+        <details>
+          <summary>What is Footprint?</summary>
+          <p>A read-only scan of any wallet's public money trail. Use it before you deposit to see what is already linked to you, and after you withdraw to check that your fresh wallet only shows the relayer.</p>
+        </details>
+        <details>
+          <summary>What does it cost?</summary>
+          <p>No protocol fee. The relayer charges only the gas it pays, capped at 0.5% by the contract.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="l-cta grid-bg">
+      <div class="wrap">
+        <h2>Try it on testnet</h2>
+        <p class="sub center">Free test ETH, real zero-knowledge proofs.</p>
+        <div class="row center">
+          <a class="btn big" href="/app">Launch App →</a>
+          <a class="btn ghost big" href="/docs">Read the docs</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="l-foot">
+      <div class="wrap">
+        <p>Built on the audited <a href="https://github.com/0xbow-io/privacy-pools-core" rel="noreferrer" target="_blank">0xbow Privacy Pools</a> contracts and circuits (Apache-2.0).</p>
+      </div>
+    </footer>
+
+    <svg class="sprite" width="0" height="0">
+      <symbol id="logo" viewBox="0 0 32 32">
+        <circle cx="16" cy="16" r="13.5" fill="none" stroke="currentColor" stroke-width="2.2" />
+        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M8.6 20.6v-4.1a7.4 7.4 0 0 1 14.8 0v1.7" />
+          <path d="M11.3 22v-5.5a4.7 4.7 0 0 1 9.4 0v3.5" opacity=".68" />
+          <path d="M14 23.4v-6.9a2 2 0 0 1 4 0v5" opacity=".4" />
+        </g>
+      </symbol>
+    </svg>
+    <script type="module" src="/src/landing.js"></script>
+  </body>
+</html>

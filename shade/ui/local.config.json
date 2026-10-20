@@ -1,0 +1,20 @@
+{
+  "chainName": "ZeroPrint Local (test)",
+  "walletRpc": "http://127.0.0.1:8923",
+  "explorer": null,
+  "delaySec": 300,
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "origin": "https://127.0.0.1:8920",
+  "deployment": {
+    "chainId": 31337,
+    "entrypoint": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "entrypointImpl": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+    "ownerRenounced": true,
+    "pool": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+    "postman": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    "ragequitVerifier": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "scope": "8944001905360985283472894173577940498501645720093794467964652006385959323310",
+    "startBlock": 0,
+    "withdrawalVerifier": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+  }
+}
