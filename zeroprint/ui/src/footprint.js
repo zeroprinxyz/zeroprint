@@ -31,9 +31,10 @@ const KIND = {
   unknown: ["Unknown", ico('<circle cx="12" cy="12" r="8"/><path d="M10 9.5a2 2 0 1 1 2.8 1.8c-.6.3-.8.8-.8 1.4M12 16h.01"/>')],
 };
 
+// "api" (the bridge's own record, nothing matched on the destination chain yet) gets no badge:
+// the row already shows which chain transactions were found.
 const PROOF = {
   verified: ["Verified on-chain", "ok"],
-  api: ["Bridge API only", "mid"],
   likely: ["Likely match", "mid"],
 };
 
@@ -60,7 +61,7 @@ function legRow(l) {
     l.asset?.amountOut != null && (l.asset.amountOut !== l.asset.amountIn || l.asset.out !== l.asset.in)
       ? ` → ${esc(amt(l.asset.amountOut, l.asset.out))}`
       : "";
-  const [plabel, pcls] = pending ? ["Pending", "mid"] : (PROOF[l.proof?.status] ?? ["Unproven", "none"]);
+  const [plabel, pcls] = pending ? ["Pending", "mid"] : (PROOF[l.proof?.status] ?? []);
   const checks = (l.proof?.checks ?? []).map((c) => `<li class="${c.ok ? "ok" : "no"}">${c.ok ? "✓" : "✗"} ${esc(c.text)}</li>`).join("");
   return `<div class="fp-leg k-${esc(l.kind)}">
     <div class="fp-ic">${icon}</div>
@@ -70,7 +71,7 @@ function legRow(l) {
       }<span class="fp-route">${route}</span><span class="fp-age">${l.from?.time ? esc(ago(l.from.time)) : ""}</span></div>
       <div class="fp-l2"><span class="fp-amt">${esc(sent)}${got}</span><span class="fp-usd">${esc(usd(l.asset?.usd))}</span></div>
       <div class="fp-l3">${l.self ? "" : scanLink(other?.address)}${ext(l.from?.txUrl, bridge ? `${l.from?.chainName ?? ""} tx` : "tx")}${bridge ? ext(l.to?.txUrl, `${l.to?.chainName ?? ""} tx`) : ""}
-        ${bridge || checks ? `<details class="fp-proof p-${pcls}"><summary>${esc(plabel)}</summary>${checks ? `<ul>${checks}</ul>` : ""}</details>` : ""}</div>
+        ${plabel ? `<details class="fp-proof p-${pcls}"><summary>${esc(plabel)}</summary>${checks ? `<ul>${checks}</ul>` : ""}</details>` : ""}</div>
     </div>
   </div>`;
 }
@@ -96,7 +97,7 @@ function exposure(r) {
     findings.push(["mid", `${wallets.size} direct wallet link${wallets.size > 1 ? "s" : ""}`, "Anyone can follow these transfers to other wallets and group them as one owner.", "Source: on-chain transfers"]);
   if (bridges.length) {
     const n = (s) => bridges.filter((l) => l.proof?.status === s).length;
-    const proof = [[n("verified"), "verified on-chain"], [n("api"), "bridge API only"], [n("likely"), "likely match"]].filter(([k]) => k).map(([k, t]) => `${k} ${t}`).join(", ");
+    const proof = [[n("verified"), "verified on-chain"], [n("likely"), "likely match"]].filter(([k]) => k).map(([k, t]) => `${k} ${t}`).join(", ");
     findings.push(["mid", `${bridges.length} bridge hop${bridges.length > 1 ? "s" : ""}`, "Bridges connect this wallet to its addresses on other chains.", `Source: bridge APIs, re-checked on both chains${proof ? ` (${proof})` : ""}`]);
   }
   const ff = r.firstFunder;
