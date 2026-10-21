@@ -48,6 +48,7 @@ module.exports = {
         ...footprint,
         UI_CONFIG: `${ROOT}/zeroprint/ui/testnet.config.json`,
         FOOTPRINT_LIMIT: "off", // no per-visitor scan limit for now; remove this line to restore it
+        BRIDGE_TEST: "1", // the real bridges are mainnet-only: offer the same-chain "echo" route here
         ASP_URL: "http://127.0.0.1:8936",
         RELAYER_URL: "http://127.0.0.1:8935",
         TLS_CERT: `${ROOT}/zeroprint/local/tls/cert.pem`,

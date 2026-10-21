@@ -1,6 +1,9 @@
 import "./style.css";
 import "./landing.css";
 import "./docs.css";
+import { mountMobileNav } from "./mnav.js";
+
+mountMobileNav();
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);

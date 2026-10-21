@@ -1,5 +1,7 @@
 node_modules/
 ui/dist/
+ui/dist-next/
+ui/dist-ipfs/
 local/anvil-state.json
 local/anvil-keys.txt
 local/secrets.env
@@ -25,3 +27,5 @@ asp/testnet-zp/
 mainnet/smoke-zero-key.txt
 relayer/testnet-zp/
 mainnet/smoke-fresh-key.txt
+testnet/smoke-ui-zero-key.txt
+e2e/*.tmp.mjs

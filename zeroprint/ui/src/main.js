@@ -1,11 +1,15 @@
 import "./style.css";
-import { createWalletClient, custom, formatEther, getAddress, isAddress, keccak256, parseEther, toHex } from "viem";
+import { createWalletClient, custom, formatEther, formatUnits, getAddress, isAddress, keccak256, parseEther, toHex } from "viem";
 import { english, generateMnemonic } from "viem/accounts";
 import { startShade } from "./bgfx.js";
 import { boot } from "./boot.js";
+import { createBridge, validRecipient } from "./bridge.js";
 import { createShade, settle } from "./core.js";
+import { DUST, hopAccount, hopReserve, hopScan, hopSend, nextHop } from "./hop.js";
 import { forgetKey, hasStoredKey, saveKey, unlockKey } from "./keystore.js";
 import { mountMobileNav } from "./mnav.js";
+import { ROUND, amountCounts, isRound, meterHtml, privacyCheck } from "./privacy.js";
+import { loadLocal, saveLocal } from "./store.js";
 
 mountMobileNav();
 
@@ -20,14 +24,18 @@ const short = (a) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 const cfg = await fetch("/config.json", { cache: "no-store" }).then((r) => r.json());
 const origin = location.origin;
+// The IPFS copy has no server of its own: it reads the chain from the public RPC and uses
+// cfg.api (the main site) for the relayer and bridges.
+const api = cfg.api ?? origin;
 const shade = createShade({
-  rpcUrl: `${origin}/rpc`,
+  rpcUrl: cfg.rpcUrl ?? `${origin}/rpc`,
   chainName: cfg.chainName,
   deployment: cfg.deployment,
-  aspUrl: `${origin}/asp`,
-  relayerUrl: `${origin}/relayer`,
+  aspUrl: `${api}/asp`,
+  relayerUrl: `${api}/relayer`,
   circuits: { browser: true, baseUrl: `${origin}/` },
 });
+const bridge = createBridge(`${api}/bridge-api`);
 
 const S = {
   mnemonic: null, // only in memory while unlocked
@@ -37,7 +45,10 @@ const S = {
   address: null,
   pool: null,
   draftWords: null,
+  local: null, // { plans, bridges }: encrypted in this browser, see store.js
+  routes: null,
 };
+const saveL = () => (S.mnemonic && S.local ? saveLocal(S.mnemonic, shade.scope.toString(), S.local) : Promise.resolve());
 
 // ---------- toast ----------
 let toastTimer;
@@ -167,6 +178,11 @@ async function sendTx(tx) {
 async function loadAccount() {
   S.acct = await shade.loadAccount(S.mnemonic);
   S.notes = await shade.notes(S.acct);
+  if (!S.local) {
+    S.local = await loadLocal(S.mnemonic, shade.scope.toString());
+    // a part that was running when the tab closed: try it again (it is bounded by the balance)
+    for (const p of S.local.plans) for (const x of p.parts) if (x.state === "running") Object.assign(x, { state: "retry", retryAt: 0 });
+  }
 }
 
 function renderKey() {
@@ -181,7 +197,7 @@ function renderKey() {
         <button class="btn ghost" id="lock">Lock</button>
       </div>`;
     $("#lock").onclick = () => {
-      Object.assign(S, { mnemonic: null, acct: null, notes: [] });
+      Object.assign(S, { mnemonic: null, acct: null, notes: [], local: null, previewHop: null, hops: null });
       render();
     };
     return;
@@ -300,10 +316,34 @@ function viewDeposit(el) {
     ${S.mnemonic ? "" : needKey}
     <label>Amount (min ${min} ETH)</label>
     <input id="amt" class="amount" inputmode="decimal" placeholder="0.1" />
-    <div class="chips">${["0.01", "0.05", "0.1", "0.5", "1"].map((v) => `<button class="chip" data-v="${v}">${v}</button>`).join("")}</div>
-    <div class="note">Round amounts hide better: a deposit of 0.3712 ETH followed by a withdrawal of 0.3712 ETH is easy to match.</div>
+    <div class="chips" id="dchips">${["0.01", "0.05", "0.1", "0.5", "1"].map((v) => `<button class="chip" data-v="${v}">${v}</button>`).join("")}</div>
+    <div class="note" id="dnote">Round amounts hide better: a deposit of 0.3712 ETH followed by a withdrawal of 0.3712 ETH is easy to match. The small number on each amount is how many approved deposits already used it: joining a common amount puts you in a bigger crowd.</div>
     <button class="btn wide" id="dep" ${S.mnemonic ? "" : "disabled"}>${S.address ? "Deposit" : "Connect wallet & deposit"}</button>`;
-  el.querySelectorAll(".chip").forEach((c) => (c.onclick = () => ($("#amt").value = c.dataset.v)));
+  const pickChip = (v) => {
+    $("#amt").value = v;
+    $("#amt").dispatchEvent(new Event("input"));
+  };
+  el.querySelectorAll(".chip").forEach((c) => (c.onclick = () => pickChip(c.dataset.v)));
+  shade
+    .crowd()
+    .then((crowd) => {
+      const counts = amountCounts(crowd);
+      el.querySelectorAll("#dchips .chip").forEach((c) => {
+        const k = counts.get(parseEther(c.dataset.v)) ?? 0;
+        c.innerHTML = `${c.dataset.v}<small>${k}</small>`;
+        c.title = `${k} approved deposit${k === 1 ? "" : "s"} of ${c.dataset.v} ETH`;
+      });
+    })
+    .catch(() => {});
+  $("#amt").addEventListener("input", () => {
+    let v = 0n;
+    try {
+      v = parseEther($("#amt").value.trim() || "0");
+    } catch {}
+    const odd = v > 0n && !isRound(v);
+    $("#dnote").className = `note${odd ? " warn" : ""}`;
+    if (odd) $("#dnote").textContent = `${formatEther(v)} ETH is an unusual amount: anyone can match it to a later withdrawal of the same size. Pick a round amount like 0.01, 0.05 or 0.1.`;
+  });
   $("#dep").onclick = async () => {
     try {
       const value = parseEther($("#amt").value.trim() || "0");
@@ -368,7 +408,9 @@ function viewMine(el) {
             )
             .join("")
         : `<div class="note">No deposits for this Zero Key yet.</div>`
-    }</div>`;
+    }</div>
+    <div id="localPanels"></div>`;
+  renderLocalPanels($("#localPanels"));
   $("#refresh").onclick = () => withBusy($("#refresh"), loadAccount).then(render, (e) => toast(errMsg(e), true));
   el.querySelectorAll("[data-w]").forEach((b) => (b.onclick = () => ((S.pick = Number(b.dataset.w)), (location.hash = "#withdraw"))));
   // ZeroPrintASP: when no keeper does it, the depositor can queue/approve from the deposit wallet
@@ -419,6 +461,124 @@ function viewMine(el) {
   );
 }
 
+// ---------- withdraw: one engine for the form, split plans and bridge hops ----------
+const MIN_PART = 1_000_000_000_000_000n; // 0.001 ETH, the relayer minimum
+const routeOf = (id) => (S.routes ?? []).find((r) => r.id === id);
+const fmtUnits = (v, decimals, dp = 6) => {
+  const s = formatUnits(BigInt(v), decimals);
+  const [i, f = ""] = s.split(".");
+  return f ? `${i}.${f.slice(0, dp).replace(/0+$/, "") || "0"}` : i;
+};
+const usedHops = () => (S.local?.bridges ?? []).map((b) => b.hop);
+
+/**
+ * Withdraws `amount` from the deposit with `label` to `recipient` on `dest` ("rh" = this chain,
+ * else a bridge route). Bridge: pool -> fresh hop wallet -> bridge deposit address.
+ */
+async function doWithdraw({ label, amount, dest, recipient }, step = () => {}) {
+  await loadAccount();
+  const note = S.notes.find((x) => x.label === label && x.state === "approved");
+  if (!note || note.balance < amount) throw new Error("Not enough approved balance left in this deposit");
+  if (dest === "rh") {
+    const r = await shade.withdraw(S.acct, note, amount, recipient, step);
+    await shade.pub.waitForTransactionReceipt({ hash: r.txHash });
+    await settle();
+    await loadAccount();
+    return { txHash: r.txHash };
+  }
+  const route = routeOf(dest);
+  if (!route) throw new Error("This destination is not available");
+  step("quote");
+  const hopIndex = await nextHop(shade.pub, S.mnemonic, usedHops());
+  const hop = hopAccount(S.mnemonic, hopIndex);
+  const q0 = await shade.quote(amount, hop.address);
+  const net = amount - (amount * BigInt(q0.feeBPS)) / 10_000n;
+  const q = await bridge.quote({ route: dest, amount: net - (await hopReserve(shade.pub)), recipient, refundTo: hop.address });
+  const rec = { id: crypto.randomUUID(), at: Math.floor(Date.now() / 1000), label, hop: hopIndex, hopAddress: hop.address, dest, recipient, amount: amount.toString(), quote: q, state: "withdrawing" };
+  S.local.bridges.unshift(rec);
+  await saveL();
+  const r = await shade.withdraw(S.acct, note, amount, hop.address, step);
+  await shade.pub.waitForTransactionReceipt({ hash: r.txHash });
+  await settle();
+  Object.assign(rec, { withdrawTx: r.txHash, state: "hop" });
+  await saveL();
+  step("hop");
+  await bridgeFromHop(rec, hop, q);
+  step("bridge");
+  await watchBridge(rec, 15 * 60_000);
+  await loadAccount();
+  return { txHash: r.txHash, bridge: rec };
+}
+
+/** Pays the bridge deposit address from the hop (a plain transfer, signed here). */
+async function bridgeFromHop(rec, hop, q) {
+  const sent = await hopSend(shade.pub, shade.chain, hop, q.depositAddress, BigInt(q.amountIn));
+  Object.assign(rec, { quote: q, hopTx: sent.hash, state: "bridging" });
+  await saveL();
+  bridge.submit(q, sent.hash);
+}
+
+async function watchBridge(rec, maxMs) {
+  const until = Date.now() + maxMs;
+  while (Date.now() < until) {
+    const st = await bridge.status(rec.quote).catch(() => null);
+    if (st) {
+      Object.assign(rec, { bridgeState: st.state, destTx: st.destTx ?? rec.destTx, destTxUrl: st.destTxUrl ?? rec.destTxUrl });
+      if (["done", "refunded", "failed"].includes(st.state)) {
+        rec.state = st.state;
+        await saveL();
+        return st.state;
+      }
+    }
+    await new Promise((r) => setTimeout(r, 8000));
+  }
+  await saveL();
+  return "processing";
+}
+
+/** Split: round equal parts at random times inside the window, at least 10 min apart. */
+function makePlan({ label, total, parts, hours, dest, recipients }) {
+  const part = ((total / BigInt(parts)) / MIN_PART) * MIN_PART;
+  if (part < MIN_PART) throw new Error("Each part must be at least 0.001 ETH");
+  const now = Math.floor(Date.now() / 1000);
+  const span = hours * 3600;
+  const times = Array.from({ length: parts }, () => now + 300 + Math.floor(Math.random() * (span - 300))).sort((a, b) => a - b);
+  for (let i = 1; i < times.length; i++) times[i] = Math.max(times[i], times[i - 1] + 600);
+  return {
+    id: crypto.randomUUID(),
+    created: now,
+    label,
+    dest,
+    parts: times.map((at, i) => ({ amount: part.toString(), at, to: recipients[i % recipients.length], state: "todo" })),
+  };
+}
+
+let planBusy = false;
+async function runPlans(force) {
+  if (planBusy || !S.mnemonic || !S.local) return;
+  const now = Math.floor(Date.now() / 1000);
+  for (const plan of S.local.plans) {
+    const p = plan.parts.find((x) => (x.state === "todo" && (x.at <= now || force === x)) || (x.state === "retry" && x.retryAt <= now));
+    if (!p) continue;
+    planBusy = true;
+    try {
+      p.state = "running";
+      await saveL();
+      const r = await doWithdraw({ label: plan.label, amount: BigInt(p.amount), dest: plan.dest, recipient: p.to });
+      Object.assign(p, { state: "done", tx: r.txHash, doneAt: Math.floor(Date.now() / 1000) });
+      toast(`Split plan: part sent (${eth(BigInt(p.amount))} ETH).`);
+    } catch (e) {
+      p.tries = (p.tries ?? 0) + 1;
+      Object.assign(p, { error: errMsg(e), state: p.tries >= 3 ? "failed" : "retry", retryAt: now + 600 });
+    } finally {
+      planBusy = false;
+      await saveL();
+      if (location.hash.startsWith("#mine")) render();
+    }
+    return; // one part per tick
+  }
+}
+
 function viewWithdraw(el) {
   if (!S.mnemonic) return (el.innerHTML = `<h2>Withdraw privately</h2>${needKey}`);
   const ready = S.notes.map((n, i) => ({ n, i })).filter(({ n }) => n.state === "approved" && n.balance > 0n);
@@ -427,6 +587,7 @@ function viewWithdraw(el) {
     return;
   }
   const pick = ready.some((r) => r.i === S.pick) ? S.pick : ready[0].i;
+  const routes = S.routes ?? [];
   el.innerHTML = `
     <h2>Withdraw privately</h2>
     <p class="sub">The proof is made here in your browser. The relayer pays the gas, so the new wallet needs nothing and never touches your old one.</p>
@@ -434,33 +595,85 @@ function viewWithdraw(el) {
     <select id="note">${ready.map(({ n, i }) => `<option value="${i}" ${i === pick ? "selected" : ""}>${eth(n.balance)} ETH · ${short(n.label)}</option>`).join("")}</select>
     <label>Amount</label>
     <div class="row"><input id="amt" class="amount" inputmode="decimal" style="flex:1" /><button class="chip" id="max">Max</button></div>
-    <label>Recipient (a fresh wallet)</label>
+    <div class="chips" id="wchips"></div>
+    <label>Receive on</label>
+    <select id="dest"><option value="rh">${esc(cfg.chainName)} (this chain)</option>${routes
+      .map((r) => `<option value="${r.id}">${esc(r.name)} · ${esc(r.symbol)}</option>`)
+      .join("")}</select>
+    <div id="destNote"></div>
+    <label id="toLabel">Recipient (a fresh wallet)</label>
     <input id="to" placeholder="0x…" autocomplete="off" spellcheck="false" />
+    <details id="split" class="split">
+      <summary>Split into several withdrawals over time</summary>
+      <div class="row">
+        <label class="inl">Parts <select id="parts">${[2, 3, 4, 5, 6, 8, 10].map((v) => `<option>${v}</option>`).join("")}</select></label>
+        <label class="inl">Spread over <select id="spread">${[6, 12, 24, 48, 72].map((v) => `<option value="${v}" ${v === 24 ? "selected" : ""}>${v} hours</option>`).join("")}</select></label>
+      </div>
+      <label>Recipients, one per line (best: a different fresh wallet for each part)</label>
+      <textarea id="tos" rows="3" autocomplete="off" spellcheck="false"></textarea>
+      <div class="note">Each part is its own private withdrawal at a random time in the window, at least 10 min apart. Proofs are made in this browser, so <b>keep this tab open and unlocked</b>. If you close it, due parts run when you come back and unlock.</div>
+    </details>
+    <div id="meter"></div>
     <div id="checks"></div>
-    <div id="quote" class="note">Enter an amount and a recipient to get the relayer fee.</div>
+    <div id="quote" class="note">Enter an amount and a recipient to get a quote.</div>
     <button class="btn wide" id="go" disabled>Generate proof & withdraw</button>
     <ol class="steps" id="steps" hidden>
-      <li data-s="quote">Relayer fee quote</li>
+      <li data-s="quote">Fee quote</li>
       <li data-s="trees">Rebuild pool tree + check ASP set against the chain</li>
       <li data-s="prove">Zero-knowledge proof (in this browser)</li>
       <li data-s="relay">Relayer submits the transaction</li>
+      <li data-s="hop" data-b>Hop wallet pays the bridge</li>
+      <li data-s="bridge" data-b>Bridge delivers on the other chain</li>
     </ol>
     <div id="result"></div>`;
   const note = () => S.notes[Number($("#note").value)];
-  $("#max").onclick = () => {
-    $("#amt").value = formatEther(note().balance);
+  const splitOn = () => $("#split").open;
+  const setAmt = (v) => {
+    $("#amt").value = v;
     update();
   };
+  const chips = () => {
+    const bal = note().balance;
+    $("#wchips").innerHTML = ROUND.filter((v) => parseEther(v) <= bal)
+      .map((v) => `<button class="chip" data-v="${v}">${v}</button>`)
+      .join("");
+    $("#wchips").querySelectorAll(".chip").forEach((c) => (c.onclick = () => setAmt(c.dataset.v)));
+  };
+  chips();
+  $("#max").onclick = () => setAmt(formatEther(note().balance));
   let timer;
+  let seq = 0;
   const update = () => {
     clearTimeout(timer);
-    timer = setTimeout(check, 350);
+    timer = setTimeout(check, 400);
   };
-  ["#amt", "#to", "#note"].forEach((s) => $(s).addEventListener("input", update));
+  ["#amt", "#to", "#tos", "#parts", "#spread"].forEach((s) => $(s).addEventListener("input", update));
+  $("#note").addEventListener("input", () => (chips(), update()));
+  $("#split").addEventListener("toggle", () => {
+    $("#to").hidden = $("#toLabel").hidden = splitOn();
+    if (splitOn() && !$("#tos").value && $("#to").value) $("#tos").value = $("#to").value;
+    update();
+  });
+  $("#dest").addEventListener("input", () => {
+    const r = routeOf($("#dest").value);
+    $("#toLabel").textContent = r ? `Recipient on ${r.name} (a fresh wallet)` : "Recipient (a fresh wallet)";
+    $("#to").placeholder = r ? { evm: "0x…", solana: "Solana address", btc: "bc1… / 1… / 3…", zec: "t1… (transparent)" }[r.kind] : "0x…";
+    $("#destNote").innerHTML = r
+      ? `<div class="note">Goes <b>pool → a one-time hop wallet → ${r.providers.map((p) => (p === "relay" ? "Relay" : p === "near" ? "NEAR Intents" : p)).join(" or ")} → ${esc(r.name)}</b>. The hop wallet comes from your Zero Key; if the bridge refunds, the ETH lands there and you can retry from <a href="#mine">My deposits</a>. The bridge sees the amount and the destination, never your deposit.</div>`
+      : "";
+    update();
+  });
+
+  function recipients() {
+    const r = routeOf($("#dest").value);
+    const list = splitOn() ? $("#tos").value.split(/\s+/).map((x) => x.trim()).filter(Boolean) : [$("#to").value.trim()].filter(Boolean);
+    const ok = (a) => (r ? validRecipient(r.kind, a) : isAddress(a));
+    return { list: list.map((a) => (!r || r.kind === "evm") && isAddress(a) ? getAddress(a) : a), bad: list.filter((a) => !ok(a)), route: r };
+  }
 
   async function check() {
+    const my = ++seq;
     const n = note();
-    const to = $("#to").value.trim();
     const warn = [];
     let ok = true;
     let amount = 0n;
@@ -470,45 +683,76 @@ function viewWithdraw(el) {
       ok = false;
     }
     if (amount <= 0n || amount > n.balance) ok = false;
-    if (to && !isAddress(to)) {
-      warn.push(`<div class="note bad">That is not a valid address.</div>`);
+    const parts = splitOn() ? Number($("#parts").value) : 1;
+    const each = splitOn() ? ((amount / BigInt(parts)) / MIN_PART) * MIN_PART : amount;
+    if (splitOn() && amount > 0n && each < MIN_PART) {
+      warn.push(`<div class="note bad">Each part must be at least 0.001 ETH.</div>`);
       ok = false;
     }
-    if (isAddress(to)) {
+    const { list, bad, route } = recipients();
+    if (bad.length) {
+      warn.push(`<div class="note bad">Not a valid ${route ? esc(route.name) : ""} address: <span class="mono">${esc(bad[0])}</span></div>`);
+      ok = false;
+    }
+    if (!list.length) ok = false;
+    if (splitOn() && list.length && list.length < parts)
+      warn.push(`<div class="note warn">${parts} parts but ${list.length} recipient${list.length > 1 ? "s" : ""}: parts sent to the same wallet are linked to each other. One fresh wallet per part hides best.</div>`);
+    const dep = await shade.pub.getTransaction({ hash: n.depositTx }).catch(() => null);
+    for (const to of list.filter(isAddress)) {
       const t = to.toLowerCase();
       if (S.address && t === S.address.toLowerCase())
-        warn.push(`<div class="note bad">This is your connected wallet. Withdrawing to it links you back. Use a brand-new wallet.</div>`);
-      const depLog = await shade.pub.getTransaction({ hash: n.depositTx }).catch(() => null);
-      if (depLog && t === depLog.from.toLowerCase())
-        warn.push(`<div class="note bad">This is the wallet that made the deposit. Anyone can link them.</div>`);
-      const used = await shade.pub.getTransactionCount({ address: to }).catch(() => 0);
-      if (used > 0) warn.push(`<div class="note warn">This wallet has sent transactions before. A fresh wallet hides better.</div>`);
+        warn.push(`<div class="note bad">${short(to)} is your connected wallet. Withdrawing to it links you back. Use a brand-new wallet.</div>`);
+      if (dep && t === dep.from.toLowerCase()) warn.push(`<div class="note bad">${short(to)} made the deposit. Anyone can link them.</div>`);
+      if (!route) {
+        const used = await shade.pub.getTransactionCount({ address: to }).catch(() => 0);
+        if (used > 0) warn.push(`<div class="note warn">${short(to)} has sent transactions before. A fresh wallet hides better.</div>`);
+      }
     }
-    const dep = await shade.pub.getBlock({ blockNumber: n.depositBlock }).catch(() => null);
-    if (dep && Date.now() / 1000 - Number(dep.timestamp) < 3600)
-      warn.push(`<div class="note warn">Deposited less than an hour ago. Waiting longer (and letting others deposit) makes the link harder to guess.</div>`);
-    if (amount > 0n && !/^\d+(\.\d{1,2})?$/.test(formatEther(amount)))
-      warn.push(`<div class="note warn">Unusual amount. Exact odd amounts are easy to match; consider a round amount and withdrawing the rest later.</div>`);
+    // privacy meter, from the public deposit list
+    if (amount > 0n) {
+      try {
+        const [crowd, blk] = await Promise.all([shade.crowd(), shade.pub.getBlock({ blockNumber: n.depositBlock })]);
+        if (my !== seq) return;
+        $("#meter").innerHTML = meterHtml(privacyCheck({ crowd, note: n, amount: each, ageSec: Date.now() / 1000 - Number(blk.timestamp) }));
+      } catch {
+        $("#meter").innerHTML = "";
+      }
+    } else $("#meter").innerHTML = "";
+    if (my !== seq) return;
     $("#checks").innerHTML = warn.join("");
-    if (!ok || !isAddress(to)) {
+    $("#go").textContent = splitOn() ? `Create plan: ${parts} × ${eth(each)} ETH` : "Generate proof & withdraw";
+    if (!ok) {
       $("#go").disabled = true;
       return;
     }
     try {
-      const q = await shade.quote(amount, getAddress(to));
-      const fee = (amount * BigInt(q.feeBPS)) / 10_000n;
-      const max = S.pool?.maxRelayFeeBPS ?? 50n;
-      const tooHigh = BigInt(q.feeBPS) > max;
-      $("#quote").className = `note ${tooHigh ? "bad" : "good"}`;
-      $("#quote").innerHTML = tooHigh
-        ? `The relayer asks ${(Number(q.feeBPS) / 100).toFixed(2)}% of this amount, above the pool's ${Number(max) / 100}% cap. Withdraw a larger amount or use another relayer.`
-        : fee === 0n
-          ? `No relayer fee: the relayer pays the gas. Recipient gets <b>${eth(amount, 6)} ETH</b>.`
-          : `Relayer fee ${(Number(q.feeBPS) / 100).toFixed(2)}% (${eth(fee, 6)} ETH). Recipient gets <b>${eth(amount - fee, 6)} ETH</b>.`;
-      $("#go").disabled = tooHigh;
+      if (!route) {
+        const q = await shade.quote(each, list[0]);
+        if (my !== seq) return;
+        const fee = (each * BigInt(q.feeBPS)) / 10_000n;
+        const max = S.pool?.maxRelayFeeBPS ?? 50n;
+        const tooHigh = BigInt(q.feeBPS) > max;
+        $("#quote").className = `note ${tooHigh ? "bad" : "good"}`;
+        $("#quote").innerHTML = tooHigh
+          ? `The relayer asks ${(Number(q.feeBPS) / 100).toFixed(2)}% of this amount, above the pool's ${Number(max) / 100}% cap. Withdraw a larger amount or use another relayer.`
+          : `${fee === 0n ? "No relayer fee: the relayer pays the gas." : `Relayer fee ${(Number(q.feeBPS) / 100).toFixed(2)}% (${eth(fee, 6)} ETH).`} ${splitOn() ? "Each part" : "Recipient"} gets <b>${eth(each - fee, 6)} ETH</b>.`;
+        $("#go").disabled = tooHigh;
+      } else {
+        // preview only: the real quote (and hop wallet) is made when you press the button
+        S.previewHop ??= hopAccount(S.mnemonic, await nextHop(shade.pub, S.mnemonic, usedHops())).address;
+        const q0 = await shade.quote(each, S.previewHop);
+        const net = each - (each * BigInt(q0.feeBPS)) / 10_000n;
+        const q = await bridge.quote({ route: route.id, amount: net - (await hopReserve(shade.pub)), recipient: list[0], refundTo: S.previewHop });
+        if (my !== seq) return;
+        const via = { relay: "Relay", near: "NEAR Intents", echo: "echo" }[q.provider];
+        $("#quote").className = "note good";
+        $("#quote").innerHTML = `${splitOn() ? "Each part" : "You"} receive about <b>${fmtUnits(q.amountOut, q.decimals)} ${esc(q.symbol)}</b> on ${esc(route.name)} via ${via}${q.eta ? ` (~${q.eta < 90 ? `${q.eta} s` : `${Math.round(q.eta / 60)} min`})` : ""}. Minimum ${fmtUnits(q.minOut, q.decimals)} ${esc(q.symbol)}.${q.others?.length ? ` <span class="meta">Best of ${q.others.length + 1} bridges.</span>` : ""}`;
+        $("#go").disabled = false;
+      }
     } catch (e) {
+      if (my !== seq) return;
       $("#quote").className = "note bad";
-      $("#quote").textContent = `Relayer: ${errMsg(e)}`;
+      $("#quote").textContent = `${route ? "Bridge" : "Relayer"}: ${errMsg(e)}`;
       $("#go").disabled = true;
     }
   }
@@ -516,31 +760,148 @@ function viewWithdraw(el) {
   $("#go").onclick = async () => {
     const n = note();
     const amount = parseEther($("#amt").value.trim());
-    const to = getAddress($("#to").value.trim());
+    const dest = $("#dest").value;
+    const { list } = recipients();
+    if (splitOn()) {
+      try {
+        const plan = makePlan({ label: n.label, total: amount, parts: Number($("#parts").value), hours: Number($("#spread").value), dest, recipients: list });
+        S.local.plans.unshift(plan);
+        await saveL();
+        toast(`Plan saved: ${plan.parts.length} parts. Keep this tab open.`);
+        location.hash = "#mine";
+      } catch (e) {
+        toast(errMsg(e), true);
+      }
+      return;
+    }
     $("#steps").hidden = false;
-    const lis = [...$("#steps").children];
+    const lis = [...$("#steps").children].filter((li) => dest !== "rh" || !li.hasAttribute("data-b"));
+    $("#steps").querySelectorAll("[data-b]").forEach((li) => (li.hidden = dest === "rh"));
     const step = (s) => {
       let seen = false;
-      for (const li of lis) {
-        li.className = li.dataset.s === s ? ((seen = true), "on") : seen ? "" : "done";
-      }
+      for (const li of lis) li.className = li.dataset.s === s ? ((seen = true), "on") : seen ? "" : "done";
     };
     try {
       await withBusy($("#go"), async () => {
-        await loadAccount();
-        const fresh = S.notes.find((x) => x.label === n.label);
-        const r = await shade.withdraw(S.acct, fresh, amount, to, step);
-        lis.forEach((li) => (li.className = "done"));
-        await shade.pub.waitForTransactionReceipt({ hash: r.txHash });
-        await settle();
-        $("#result").innerHTML = `<div class="note good">Done. ${eth(amount)} ETH (minus gas fee) sent to <span class="mono">${short(to)}</span> · tx ${txLink(r.txHash)}</div>`;
-        await loadAccount();
+        const r = await doWithdraw({ label: n.label, amount, dest, recipient: list[0] }, step);
+        S.previewHop = null;
+        if (!r.bridge) {
+          lis.forEach((li) => (li.className = "done"));
+          $("#result").innerHTML = `<div class="note good">Done. ${eth(amount)} ETH sent to <span class="mono">${short(list[0])}</span> · tx ${txLink(r.txHash)}</div>`;
+          return;
+        }
+        const b = r.bridge;
+        if (b.state === "done") lis.forEach((li) => (li.className = "done"));
+        $("#result").innerHTML = `<div class="note ${b.state === "done" ? "good" : b.state === "processing" || b.state === "bridging" ? "" : "bad"}">${bridgeLine(b)}</div>`;
       });
     } catch (e) {
-      $("#result").innerHTML = `<div class="note bad">${esc(errMsg(e))}</div>`;
+      S.previewHop = null;
+      $("#result").innerHTML = `<div class="note bad">${esc(errMsg(e))}${S.local.bridges[0]?.state === "hop" ? " Your ETH is safe in the hop wallet: retry from My deposits." : ""}</div>`;
     }
   };
   if (S.pick !== undefined) $("#max").click();
+  $("#dest").dispatchEvent(new Event("input"));
+}
+
+function bridgeLine(b) {
+  const q = b.quote;
+  const r = routeOf(b.dest);
+  const what = `${eth(BigInt(b.amount))} ETH → ${q ? `~${fmtUnits(q.amountOut, q.decimals)} ${esc(q.symbol)}` : "?"} on ${esc(r?.name ?? b.dest)}`;
+  const state = { withdrawing: "withdrawing", hop: "waiting in hop wallet", bridging: "bridging…", processing: "bridging…", done: "delivered ✅", refunded: "refunded to the hop wallet", failed: "failed" }[b.state] ?? b.state;
+  const links = [b.withdrawTx && `withdraw ${txLink(b.withdrawTx)}`, b.hopTx && `hop ${txLink(b.hopTx)}`, b.destTxUrl ? `<a href="${esc(b.destTxUrl)}" target="_blank" rel="noreferrer">destination tx</a>` : b.destTx ? `dest <span class="mono">${esc(short(b.destTx))}</span>` : ""].filter(Boolean);
+  return `${what} · <b>${state}</b>${q ? ` · via ${{ relay: "Relay", near: "NEAR Intents", echo: "echo" }[q.provider]}` : ""}<div class="meta">${links.join(" · ")}</div>`;
+}
+
+/** Plans, bridge withdrawals and hop wallets, under My deposits. */
+function renderLocalPanels(host) {
+  const plans = S.local?.plans ?? [];
+  const bridges = S.local?.bridges ?? [];
+  const fmtAt = (t) => new Date(t * 1000).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+  host.innerHTML = `
+    ${plans
+      .map((p, pi) => {
+        const left = p.parts.filter((x) => x.state !== "done" && x.state !== "failed" && x.state !== "cancelled");
+        const r = routeOf(p.dest);
+        return `<div class="plan">
+          <div class="row"><b style="flex:1">Split plan · ${p.parts.length} × ${eth(BigInt(p.parts[0].amount))} ETH → ${esc(r?.name ?? cfg.chainName)}</b>
+            ${left.length ? `<button class="btn ghost sm" data-run="${pi}">Run next now</button><button class="btn danger sm" data-cancel="${pi}">Cancel rest</button>` : `<button class="btn ghost sm" data-del="${pi}">Remove</button>`}</div>
+          <ol class="parts">${p.parts
+            .map(
+              (x) => `<li class="${x.state}"><span>${eth(BigInt(x.amount))} ETH → <span class="mono">${esc(short(x.to))}</span></span>
+                <span class="meta">${x.state === "done" ? `sent ${fmtAt(x.doneAt ?? x.at)} · ${txLink(x.tx)}` : x.state === "todo" ? `due ${fmtAt(x.at)}` : x.state === "retry" ? `retrying (${esc(x.error ?? "")})` : esc(x.state + (x.error ? `: ${x.error}` : ""))}</span></li>`,
+            )
+            .join("")}</ol>
+        </div>`;
+      })
+      .join("")}
+    ${bridges.length ? `<h3>Withdrawals to other chains</h3><div class="list">${bridges.slice(0, 12).map((b, i) => `<div class="note">${bridgeLine(b)}${["bridging", "processing"].includes(b.state) ? ` <button class="chip" data-chk="${i}">Check</button>` : ""}</div>`).join("")}</div>` : ""}
+    <div class="row" style="margin-top:14px"><button class="btn ghost sm" id="scanHops">Check hop wallets</button><span class="meta">Bridge refunds and unfinished bridges wait here.</span></div>
+    <div id="hops"></div>`;
+  host.querySelectorAll("[data-run]").forEach((b) => (b.onclick = () => {
+    const p = plans[Number(b.dataset.run)];
+    const next = p.parts.find((x) => x.state === "todo" || x.state === "retry");
+    if (next) withBusy(b, () => runPlans(next.state === "todo" ? next : (next.retryAt = 0, undefined)));
+  }));
+  host.querySelectorAll("[data-cancel]").forEach((b) => (b.onclick = async () => {
+    if (!confirm("Cancel the parts that have not run yet? The ETH stays in your deposit.")) return;
+    plans[Number(b.dataset.cancel)].parts.forEach((x) => ["todo", "retry"].includes(x.state) && (x.state = "cancelled"));
+    await saveL();
+    render();
+  }));
+  host.querySelectorAll("[data-del]").forEach((b) => (b.onclick = async () => {
+    plans.splice(Number(b.dataset.del), 1);
+    await saveL();
+    render();
+  }));
+  host.querySelectorAll("[data-chk]").forEach((b) => (b.onclick = () => withBusy(b, () => watchBridge(bridges[Number(b.dataset.chk)], 1)).then(render)));
+  $("#scanHops", host).onclick = () =>
+    withBusy($("#scanHops", host), async () => {
+      S.hops = (await hopScan(shade.pub, S.mnemonic, usedHops())).filter((h) => h.balance > DUST);
+      drawHops($("#hops", host));
+    });
+  if (S.hops) drawHops($("#hops", host)); // keep the last scan across the 1 s re-renders
+}
+
+function drawHops(host) {
+  const hops = S.hops;
+  if (!hops.length) return void (host.innerHTML = `<div class="note">No ETH waiting in hop wallets.</div>`);
+  host.innerHTML = hops
+    .map((h) => {
+      const rec = S.local.bridges.find((b) => b.hop === h.i);
+      return `<div class="note warn"><b>${eth(h.balance, 6)} ETH</b> in hop wallet #${h.i} <span class="mono">${short(h.address)}</span>${rec ? ` (bridge to ${esc(routeOf(rec.dest)?.name ?? rec.dest)} <span class="mono">${esc(short(rec.recipient))}</span>)` : ""}
+        <div class="row" style="margin-top:8px">${rec ? `<button class="btn sm" data-retry="${h.i}">Bridge it again</button>` : ""}<button class="btn ghost sm" data-sweep="${h.i}">Send to a ${esc(cfg.chainName)} address</button></div></div>`;
+    })
+    .join("");
+  host.querySelectorAll("[data-retry]").forEach((b) => (b.onclick = () => withBusy(b, async () => {
+    const i = Number(b.dataset.retry);
+    const rec = S.local.bridges.find((x) => x.hop === i);
+    const hop = hopAccount(S.mnemonic, i);
+    try {
+      const bal = await shade.pub.getBalance({ address: hop.address });
+      const q = await bridge.quote({ route: rec.dest, amount: bal - (await hopReserve(shade.pub)), recipient: rec.recipient, refundTo: hop.address });
+      if (!confirm(`Bridge ${eth(bal, 6)} ETH again → about ${fmtUnits(q.amountOut, q.decimals)} ${q.symbol} on ${routeOf(rec.dest)?.name}?`)) return;
+      await bridgeFromHop(rec, hop, q);
+      toast("Sent to the bridge. Checking…");
+      await watchBridge(rec, 10 * 60_000);
+    } catch (e) {
+      toast(errMsg(e), true);
+    }
+    S.hops = null;
+    render();
+  })));
+  host.querySelectorAll("[data-sweep]").forEach((b) => (b.onclick = () => withBusy(b, async () => {
+    const to = prompt(`Send everything in hop wallet #${b.dataset.sweep} to which ${cfg.chainName} address? Use a fresh wallet, not your deposit wallet.`);
+    if (!to) return;
+    if (!isAddress(to.trim())) return toast("Not a valid address", true);
+    try {
+      const r = await hopSend(shade.pub, shade.chain, hopAccount(S.mnemonic, Number(b.dataset.sweep)), getAddress(to.trim()), "all");
+      toast(`Sent ${eth(r.value, 6)} ETH.`);
+    } catch (e) {
+      toast(errMsg(e), true);
+    }
+    S.hops = null;
+    render();
+  })));
 }
 
 async function viewVerify(el) {
@@ -643,9 +1004,14 @@ shade
     if (location.hash === "#deposit" || !location.hash) render();
   })
   .catch(() => {});
+bridge.routes().then((r) => {
+  S.routes = r;
+  if (location.hash.startsWith("#withdraw")) render();
+});
 render();
 refreshStats();
 setInterval(refreshStats, 30_000);
+setInterval(runPlans, 30_000);
 setInterval(() => {
   if (location.hash === "#mine" && S.notes.some((n) => n.state === "pending")) render();
 }, 1000);

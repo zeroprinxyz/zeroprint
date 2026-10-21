@@ -14,15 +14,18 @@
         <svg viewBox="0 0 32 32" aria-hidden="true"><use href="#logo" /></svg>
         <span>Zero<b>Print</b> <i class="docs-tag">Docs</i></span>
       </a>
-      <nav class="lnav">
+      <nav class="lnav" data-m>
         <a href="/">Home</a>
         <a href="/footprint">Footprint</a>
         <a href="/app#verify">Verify</a>
+        <a href="/status">Status</a>
       </nav>
-      <a class="gh" href="https://github.com/zeroprinxyz/zeroprint" target="_blank" rel="noreferrer" title="Source code on GitHub" aria-label="Source code on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" /></svg></a>
-      <button class="btn ghost menu-btn" id="menuBtn" aria-label="Contents">☰</button>
+      <a class="gh" data-m href="https://github.com/zeroprinxyz/zeroprint" target="_blank" rel="noreferrer" title="Source code on GitHub" aria-label="Source code on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" /></svg></a>
+      <a class="gh x" data-m href="https://x.com/zeroprintdotxyz" target="_blank" rel="noreferrer" title="ZeroPrint on X" aria-label="ZeroPrint on X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      <button class="mnav-btn" type="button" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg></button>
       <a class="btn" href="/app">Launch App →</a>
     </header>
+    <button class="btn menu-btn" id="menuBtn" aria-label="Contents">☰ Contents</button>
 
     <div class="docs-shell">
       <aside class="docs-side" id="side">
@@ -39,6 +42,9 @@
           <a href="#key">Your Zero Key</a>
           <a href="#deposit">Depositing</a>
           <a href="#withdraw">Withdrawing privately</a>
+          <a href="#meter">Privacy meter</a>
+          <a href="#split">Split withdrawals</a>
+          <a href="#bridge">Withdraw to another chain</a>
           <a href="#checklist">Privacy checklist</a>
           <a href="#footprint">Footprint</a>
           <a href="#trouble">Troubleshooting</a>
@@ -56,6 +62,8 @@
           <a href="#trust">Trust model</a>
           <a href="#audits">Audits</a>
           <a href="#risks">Risks</a>
+          <a href="#live-status">Live status</a>
+          <a href="#mirrors">Mirrors</a>
           <a href="#status">Status</a>
           <h4>Resources</h4>
           <a href="#glossary">Glossary</a>
@@ -161,13 +169,40 @@
           </ol>
           <p>You don't need to connect a wallet to withdraw; nothing is signed.</p>
         </section>
+        <section id="meter">
+          <h2>Privacy meter</h2>
+          <p>While you fill in a withdrawal, the app rates it <b>Weak</b>, <b>Fair</b> or <b>Good</b> from public data only: the list of deposits that everyone can read. Nothing about you is sent anywhere to compute it.</p>
+          <ul>
+            <li><b>Deposits that could be the source:</b> approved deposits at least as large as your withdrawal. An observer can't tell which one is yours; this is your crowd.</li>
+            <li><b>Same amount:</b> taking out exactly what you put in, when few deposits used that amount, points straight at you.</li>
+            <li><b>Time:</b> how long ago you deposited, and how many deposits came in after yours.</li>
+          </ul>
+          <p>The deposit amount buttons show how many approved deposits already used each amount. Picking a common one puts you in a bigger crowd.</p>
+        </section>
+        <section id="split">
+          <h2>Split withdrawals</h2>
+          <p>Open <b>Split into several withdrawals over time</b> in the withdraw form. Choose the number of parts (2 to 10), a window (6 to 72 hours) and one fresh recipient per part. The app makes equal round parts and picks random times inside the window, at least 10 minutes apart.</p>
+          <p>Each part is a normal private withdrawal, and its proof is made in your browser, so <b>keep the tab open and unlocked</b>. If you close it, parts that came due run when you come back and unlock. The plan is stored in this browser only, encrypted with a key derived from your Zero Key, because it links your deposit to its recipients. Track or cancel it under <b>My deposits</b>.</p>
+        </section>
+        <section id="bridge">
+          <h2>Withdraw to another chain</h2>
+          <p>Pick a chain under <b>Receive on</b>: Solana, Base, Arbitrum, Ethereum, BNB Chain, Bitcoin or Zcash. The app asks Relay and NEAR Intents for quotes and uses the better one.</p>
+          <ol>
+            <li>The withdrawal goes to a <b>one-time hop wallet</b> derived from your Zero Key (a new one for every bridge withdrawal, so two of them never share an address).</li>
+            <li>The hop wallet sends the ETH to the bridge's one-time deposit address, with a transaction signed in your browser.</li>
+            <li>The bridge delivers the coins to your recipient on the other chain, usually within a minute (Bitcoin takes longer).</li>
+          </ol>
+          <p>If the bridge can't fill the order, it refunds to the hop wallet. <b>My deposits → Check hop wallets</b> lets you bridge it again or send it to a Robinhood Chain address.</p>
+          <div class="callout"><b>What a bridge adds, and what it doesn't.</b> Bridge records are public: anyone can follow the hop to the other chain and see the amount. The bridge never learns which deposit is yours, and your IP never reaches it (quotes go through this site). It does not make a small crowd bigger: amount and timing still matter. Bridging to Zcash and shielding there adds a much larger crowd.</div>
+        </section>
 
         <section id="checklist">
           <h2>Privacy checklist</h2>
           <p>The math is solid. Most leaks come from habits. Before you withdraw:</p>
           <ul class="ticks">
             <li><b>Wait.</b> Let time pass and let others deposit after you. Withdrawing minutes after depositing narrows the crowd.</li>
-            <li><b>Round amounts.</b> Deposit 0.1, not 0.0937. Withdraw in several parts at different times if your amount is unusual.</li>
+            <li><b>Round amounts.</b> Deposit 0.1, not 0.0937. Withdraw in several parts at different times if your amount is unusual (the app can <a href="#split">split</a> it for you).</li>
+            <li><b>Read the meter.</b> The <a href="#meter">privacy meter</a> tells you when the crowd is too small or the timing too close.</li>
             <li><b>Fresh recipient.</b> Never your depositing wallet, never a wallet you used before.</li>
             <li><b>Don't fund the recipient yourself.</b> The relayer pays gas; sending gas from your old wallet links them.</li>
             <li><b>Don't send it back.</b> Moving funds from the new wallet to the old one undoes everything.</li>
@@ -331,6 +366,7 @@ event RootPosted(uint256 root, uint256 size);</code></pre>
                 <tr><td>Minimum relayed withdrawal</td><td>0.001 ETH</td></tr>
                 <tr><td>ASP window</td><td>30 minutes, fixed in <code>ZeroPrintASP</code></td></tr>
                 <tr><td>Asset</td><td>ETH only</td></tr>
+                <tr><td>Withdraw to another chain</td><td>The bridge's own fee and price (shown before you confirm; ZeroPrint adds nothing) plus about 0.000002 ETH of gas for the hop transfer</td></tr>
               </tbody>
             </table>
           </div>
@@ -386,6 +422,15 @@ event RootPosted(uint256 root, uint256 size);</code></pre>
           </ul>
         </section>
 
+        <section id="live-status">
+          <h2>Live status</h2>
+          <p><a href="/status">/status</a> shows the chain, the pool, the ASP screening, the keeper and relayer (and the gas they have left) and the bridges, refreshed every 30 seconds. The ASP root is also re-checked in your browser against the chain. None of these services can touch funds: if one is down, the app and the <a href="#cli">CLI</a> still work.</p>
+        </section>
+        <section id="mirrors">
+          <h2>Mirrors</h2>
+          <p>The same front end can be served from IPFS. The IPFS copy reads the chain from the public Robinhood Chain RPC and uses zeroprint.xyz only for the relayer, ASP numbers and bridges; without zeroprint.xyz it still deposits, ragequits, approves from the deposit wallet and withdraws directly. Open it through a subdomain gateway (<code>https://&lt;CID&gt;.ipfs.dweb.link</code>) or your own IPFS node. Build it yourself with <code>zeroprint/ui/ipfs/build.sh</code> and compare the CID.</p>
+          <p>A Tor onion address hides your IP from the site itself. Both are listed here once they are live.</p>
+        </section>
         <section id="status">
           <h2>Status</h2>
           <p>Live on Robinhood Chain mainnet since 20 October 2026.</p>
@@ -397,6 +442,7 @@ event RootPosted(uint256 root, uint256 size);</code></pre>
             <li class="done">Command-line tool that works without the website</li>
             <li class="done">End-to-end tests, live testnet, mainnet smoke test</li>
             <li class="done">Open-source code</li>
+            <li class="done">Privacy meter, split withdrawals, withdraw to other chains, live status page</li>
             <li>Independent audit of ZeroPrintASP, keeper and app</li>
             <li>Hardware or multisig guardian key</li>
             <li>More relayers and a relayer fee policy</li>
@@ -431,6 +477,7 @@ event RootPosted(uint256 root, uint256 size);</code></pre>
 
         <footer class="docs-foot">
           <a href="/">← Home</a>
+          <div class="foot-social"><a class="gh" href="https://github.com/zeroprinxyz/zeroprint" target="_blank" rel="noreferrer" title="Source code on GitHub" aria-label="Source code on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" /></svg></a><a class="gh x" href="https://x.com/zeroprintdotxyz" target="_blank" rel="noreferrer" title="ZeroPrint on X" aria-label="ZeroPrint on X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a></div>
           <a href="/app">Launch App →</a>
         </footer>
       </main>

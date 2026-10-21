@@ -23,5 +23,6 @@
   "networks": {
     "mainnet": "https://zeroprint.xyz",
     "testnet": "https://testnet.zeroprint.xyz"
-  }
+  },
+  "relayer": "0x54EE9d592ca8c18379156Df3b46Aebc33277Fd4B"
 }

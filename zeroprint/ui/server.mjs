@@ -6,6 +6,7 @@ import http from "node:http";
 import https from "node:https";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { createBridges } from "./bridges.mjs";
 import { createBundleScanner } from "./launches/bundles.mjs";
 import { createEthScanner } from "./launches/eth.mjs";
 import { createInvestigator } from "./launches/investigate.mjs";
@@ -15,12 +16,13 @@ import { createSolRpc } from "./launches/solrpc.mjs";
 
 const HOST = process.env.HOST ?? "127.0.0.1";
 const PORT = Number(process.env.PORT ?? 8920);
-const DIST = path.join(import.meta.dirname, "dist");
+const DIST = path.resolve(import.meta.dirname, process.env.DIST_DIR ?? "dist");
 const CONFIG = JSON.parse(fs.readFileSync(process.env.UI_CONFIG, "utf8"));
 const RPC_URL = process.env.RPC_URL;
 const ASP_URL = process.env.ASP_URL ?? "http://127.0.0.1:8922";
 const RELAYER_URL = process.env.RELAYER_URL ?? "http://127.0.0.1:8921";
 const TRUSTED_PROXY = process.env.TRUSTED_PROXY ?? ""; // address of the public reverse proxy, if any
+const bridges = createBridges({ chainId: CONFIG.deployment.chainId, test: process.env.BRIDGE_TEST === "1" });
 // Footprint reads a wallet-tracer service (read-only)
 const TRACER_URL = process.env.TRACER_URL ?? "http://127.0.0.1:8810";
 // Robinhood Chain token launches, from a local launch index (read-only)
@@ -220,6 +222,7 @@ const RPC_ALLOW = new Set([
   "eth_feeHistory",
   "eth_estimateGas",
   "eth_getCode",
+  "eth_sendRawTransaction", // bridge hop wallets sign in the browser; the node only relays the signed tx
 ]);
 
 const MIME = {
@@ -279,9 +282,81 @@ async function forward(res, url, init, timeoutMs = 60_000) {
   res.end(body);
 }
 
+// Health of every moving part, for /status. Public numbers only; cached 15 s.
+const STARTED = Date.now();
+let statusCache = { at: 0, value: null };
+async function rpc(method, params) {
+  const r = await fetch(RPC_URL, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+    signal: AbortSignal.timeout(10_000),
+  });
+  const j = await r.json();
+  if (j.error) throw new Error(j.error.message);
+  return j.result;
+}
+const getJson = (u) => fetch(u, { signal: AbortSignal.timeout(8_000) }).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))));
+const balanceOf = (a) => (a ? rpc("eth_getBalance", [a, "latest"]).then((h) => BigInt(h).toString(), () => null) : null);
+async function statusReport() {
+  if (Date.now() - statusCache.at < 15_000 && statusCache.value) return statusCache.value;
+  const d = CONFIG.deployment;
+  const [block, poolBalance, health, stats, relayerUp, relayerBalance, bridgeReach] = await Promise.all([
+    rpc("eth_getBlockByNumber", ["latest", false]).catch(() => null),
+    balanceOf(d.pool),
+    getJson(`${ASP_URL}/health`).catch(() => null),
+    getJson(`${ASP_URL}/stats`).catch(() => null),
+    fetch(`${RELAYER_URL}/ping`, { signal: AbortSignal.timeout(8_000) }).then((r) => r.ok, () => false),
+    balanceOf(CONFIG.relayer),
+    bridges.routes().length ? bridges.reach().catch(() => null) : null,
+  ]);
+  const now = Math.floor(Date.now() / 1000);
+  const value = {
+    at: now,
+    chain: block ? { name: CONFIG.chainName, chainId: d.chainId, block: Number(block.number), lagSec: now - Number(block.timestamp) } : null,
+    pool: { address: d.pool, balance: poolBalance, ...(stats && { deposits: stats.deposits, approved: stats.approved, pending: stats.pending, denied: stats.denied, windowSec: stats.delaySec }) },
+    keeper: health
+      ? { up: true, ok: health.ok, lastTickSec: health.at ? Math.round((Date.now() - health.at) / 1000) : null, error: health.error ?? null, address: health.keeper ?? null, guardian: health.guardian ?? null, balance: await balanceOf(health.keeper) }
+      : { up: false },
+    relayer: { up: relayerUp, address: CONFIG.relayer ?? null, balance: relayerBalance },
+    bridges: bridgeReach,
+    site: { upSec: Math.round((Date.now() - STARTED) / 1000) },
+  };
+  statusCache = { at: Date.now(), value };
+  return value;
+}
+
+const sendJson = (res, code, body) => {
+  res.writeHead(code, { ...SECURITY, "content-type": "application/json", "cache-control": "no-store" });
+  res.end(JSON.stringify(body));
+};
+
 async function handle(req, res) {
   const url = new URL(req.url, "http://x");
   const p = url.pathname;
+
+  // The IPFS copy of the site calls these from another origin (no cookies are involved anywhere).
+  if (/^\/(relayer|asp|bridge-api|status-api)(\/|$)/.test(p)) {
+    res.setHeader("access-control-allow-origin", "*");
+    if (req.method === "OPTIONS") {
+      res.writeHead(204, { "access-control-allow-methods": "GET, POST", "access-control-allow-headers": "content-type", "access-control-max-age": "600" });
+      return res.end();
+    }
+  }
+
+  if (p === "/status-api") return sendJson(res, 200, await statusReport());
+
+  if (p === "/bridge-api/routes") return sendJson(res, 200, { routes: bridges.routes() });
+  if (p.startsWith("/bridge-api/")) {
+    try {
+      if (p === "/bridge-api/quote" && req.method === "POST") return sendJson(res, 200, await bridges.quote(JSON.parse(await readBody(req, 4096))));
+      if (p === "/bridge-api/submit" && req.method === "POST") return sendJson(res, 200, await bridges.submit(JSON.parse(await readBody(req, 4096))));
+      if (p === "/bridge-api/status") return sendJson(res, 200, await bridges.status(Object.fromEntries(url.searchParams)));
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
+    return sendJson(res, 404, { error: "not found" });
+  }
 
   if (p === "/config.json") {
     res.writeHead(200, { ...SECURITY, "content-type": "application/json", "cache-control": "no-store" });
@@ -421,6 +496,7 @@ async function handle(req, res) {
   if (p === "/app" || p === "/app/") file = path.join(DIST, "app.html");
   if (p === "/docs" || p === "/docs/") file = path.join(DIST, "docs.html");
   if (p === "/footprint" || p === "/footprint/") file = path.join(DIST, "footprint.html");
+  if (p === "/status" || p === "/status/") file = path.join(DIST, "status.html");
   if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) file = path.join(DIST, "index.html");
   const ext = path.extname(file);
   const immutable = p.startsWith("/assets/") || p.startsWith("/artifacts/");
@@ -446,6 +522,18 @@ const tls = process.env.TLS_CERT
 (tls ? https.createServer(tls, onRequest) : http.createServer(onRequest)).listen(PORT, HOST, () =>
   console.log(`ZeroPrint UI on ${tls ? "https" : "http"}://${HOST}:${PORT}`),
 );
+
+// Tor onion service: plain HTTP on localhost for the local tor daemon. Onion addresses are
+// end-to-end encrypted and count as a secure context in Tor Browser, so no TLS (and no HSTS).
+if (process.env.ONION_PORT) {
+  http
+    .createServer((req, res) => {
+      const writeHead = res.writeHead.bind(res);
+      res.writeHead = (code, h) => writeHead(code, h && Object.fromEntries(Object.entries(h).filter(([k]) => k !== "strict-transport-security")));
+      onRequest(req, res);
+    })
+    .listen(Number(process.env.ONION_PORT), "127.0.0.1", () => console.log(`ZeroPrint onion backend on http://127.0.0.1:${process.env.ONION_PORT}`));
+}
 
 // A visitor's IP never leaves this process: rate limits see a salted hash, and the salt is
 // replaced every day, so yesterday's IDs can't be matched to today's.

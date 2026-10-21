@@ -16,6 +16,7 @@ export default defineConfig({
         app: fileURLToPath(new URL("./app.html", import.meta.url)),
         docs: fileURLToPath(new URL("./docs.html", import.meta.url)),
         footprint: fileURLToPath(new URL("./footprint.html", import.meta.url)),
+        status: fileURLToPath(new URL("./status.html", import.meta.url)),
       },
     },
     sourcemap: true,

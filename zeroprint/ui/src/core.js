@@ -340,6 +340,25 @@ export function createShade(cfg) {
     };
   }
 
+  /**
+   * Every deposit with its value and whether the ASP approved it. Public data, the same for every
+   * visitor, so reading it reveals nothing. Cached for a minute.
+   */
+  let crowdCache;
+  async function crowd() {
+    if (crowdCache && Date.now() - crowdCache.at < 60_000) return crowdCache.value;
+    const [deps, set] = await Promise.all([getLogsChunked(EV_DEPOSITED), aspSet().catch(() => ({ labels: [] }))]);
+    const approved = new Set(set.labels.map(String));
+    const value = deps.map((l) => ({
+      label: l.args._label.toString(),
+      value: l.args._value,
+      block: l.blockNumber,
+      approved: approved.has(l.args._label.toString()),
+    }));
+    crowdCache = { at: Date.now(), value };
+    return value;
+  }
+
   async function anonymitySet() {
     const s = await fetch(`${cfg.aspUrl}/stats`, { cache: "no-store" }).then((r) => r.json());
     return s;
@@ -363,6 +382,7 @@ export function createShade(cfg) {
     aspStatus,
     aspActionTx,
     anonymitySet,
+    crowd,
     stateLeaves,
   };
 }
