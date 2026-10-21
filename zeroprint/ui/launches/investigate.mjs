@@ -195,12 +195,17 @@ export function createInvestigator({ tracerUrl, alchemyKey, rhDb, scanSolCreator
           }
         }),
       );
-      // services (exchanges' hot wallets, solvers) are not expanded further
+      // Services (exchanges' hot wallets, bridge solvers) are not expanded further. A Solana
+      // solver pools everyone's money exactly as an EVM one does, and until this check existed the
+      // walk went straight through one: whoever it paid next was then reported as being on this
+      // wallet's money trail, which is a thing about the solver, not about the person.
       await Promise.all(
         next.map(async (c) => {
           if (isEvm(c.addr)) {
             const chain = ALCHEMY_SLUG[c.chain] ? c.chain : 4663;
             c.busy = (await isContract(chain, c.addr)) || (await txCount(chain, c.addr)) > LIMITS.busyEvmTx;
+          } else if (isSol(c.addr) && solRpc) {
+            c.busy = (await solRpc.signatures(c.addr, LIMITS.busySolSigs).catch(() => [])).length >= LIMITS.busySolSigs;
           }
         }),
       );

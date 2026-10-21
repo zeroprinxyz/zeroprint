@@ -27,6 +27,7 @@ const KIND = {
   multisend: ["Multisender", ico('<path d="M4 12h6M10 12l4-5h6M10 12l4 5h6"/>')],
   fees: ["Fees", ico('<circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10.5h4a1.5 1.5 0 0 1 0 3h-3"/>')],
   swapservice: ["Swap service", ico('<path d="M4 12a8 8 0 0 1 14-5l2-2v6h-6l2.5-2.5A5 5 0 0 0 7 12M20 12a8 8 0 0 1-14 5l-2 2v-6h6l-2.5 2.5A5 5 0 0 0 17 12"/>')],
+  contract: ["Contract", ico('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>')],
   service: ["Service wallet", ico('<rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><path d="M8 7h.01M8 17h.01"/>')],
   unknown: ["Unknown", ico('<circle cx="12" cy="12" r="8"/><path d="M10 9.5a2 2 0 1 1 2.8 1.8c-.6.3-.8.8-.8 1.4M12 16h.01"/>')],
 };
@@ -51,7 +52,7 @@ const ext = (url, text) => (url ? `<a class="fp-ext" href="${esc(url)}" target="
 const scanLink = (addr) => (addr ? `<a class="fp-addr mono" href="/footprint?addr=${esc(addr)}" title="Scan this wallet">${esc(short(addr))}</a>` : "");
 
 function legRow(l) {
-  const [kindName, icon] = l.service ? KIND.service : (KIND[l.kind] ?? KIND.unknown);
+  const [kindName, icon] = l.service ? KIND.service : (KIND[l.contract && l.kind === "wallet" ? "contract" : l.kind] ?? KIND.unknown);
   const bridge = l.kind === "bridge";
   const pending = bridge && !l.to?.tx && l.proof?.status !== "likely";
   const other = l.dir === "in" ? l.from : l.to;
@@ -342,6 +343,7 @@ const KIND_COLOR = {
   multisend: "#ffcc66",
   fees: "#ffcc66",
   wallet: "#8fa3c0",
+  contract: "#d08f6a",
   service: "#ffcc66",
   unknown: "#5d6b80",
 };
@@ -351,7 +353,7 @@ function groupLegs(legs) {
   const by = new Map();
   for (const l of legs) {
     const other = l.dir === "in" ? l.from : l.to;
-    const kind = l.service ? "service" : l.kind;
+    const kind = l.service ? "service" : l.contract && l.kind === "wallet" ? "contract" : l.kind;
     const key = l.kind === "wallet" || !l.via ? `${kind}:${other?.address}` : `${kind}:${l.via}`;
     const g = by.get(key) ?? { kind, name: l.kind === "wallet" || !l.via ? short(other?.address) : l.via, address: l.kind === "wallet" ? other?.address : null, usd: 0, n: 0, chains: new Set(), self: l.self };
     g.usd += Number(l.asset?.usd ?? 0);
@@ -410,7 +412,7 @@ function moneyMap(r) {
       <text x="${cx}" y="${cy - 2}" text-anchor="middle" class="m-me">${esc(r.address.slice(0, 6))}</text>
       <text x="${cx}" y="${cy + 11}" text-anchor="middle" class="m-me">…${esc(r.address.slice(-4))}</text>
     </g>`;
-  const legend = Object.entries({ cex: "Exchange", bridge: "Bridge", wallet: "Wallet", service: "Service", dex: "Swap", privacy: "Privacy pool" })
+  const legend = Object.entries({ cex: "Exchange", bridge: "Bridge", wallet: "Wallet", contract: "Contract", service: "Service", dex: "Swap", privacy: "Privacy pool" })
     .map(([k, t]) => `<span><i style="background:${KIND_COLOR[k]}"></i>${t}</span>`)
     .join("");
   return `<div class="fp-map">
@@ -429,6 +431,7 @@ function limits(r) {
     "Inside an exchange: deposits and withdrawals are linked in its private records (KYC), not on-chain.",
     "Privacy pools and mixers: which deposit paid which withdrawal is hidden by design.",
     "Busy service wallets (exchanges, bridge solvers, payment services) pool many people's money, so the trail stops there.",
+    "ETH paid out from inside a contract on Robinhood Chain \u2014 a swap's proceeds, a refund: those internal transfers are not published, so such a leg shows only what went in.",
     "Cash, OTC and peer-to-peer trades, and transfers on chains or bridges not listed above.",
     "Off-chain links: reused usernames, IP addresses, the same habits on two wallets.",
   ].filter(Boolean);
@@ -494,7 +497,7 @@ export function viewFootprint(el, params) {
       <button class="btn" type="submit">Scan</button>
     </form>
     <p class="fp-fine">Chains: Robinhood, Ethereum, BNB Chain, Base, Solana. Bridges: Relay, Across, Robinhood Bridge, deBridge, Stargate/LayerZero, each hop re-checked on both chains. Testnets are not scanned.</p>
-    <p class="fp-fine">Not logged: no accounts, no analytics, no access logs. Rate limits use a scrambled ID of your IP that changes daily, never the IP itself. Results (public chain data) are cached for up to 6 hours so repeat scans are fast.</p>
+    <p class="fp-fine">Not logged: no accounts, no analytics, no access logs. No scan limit, and your IP never leaves this server. Results (public chain data) are cached for up to 6 hours so repeat scans are fast.</p>
     <div id="fpOut"></div>`;
   const input = el.querySelector("#fpAddr");
   const clear = el.querySelector("#fpClear");

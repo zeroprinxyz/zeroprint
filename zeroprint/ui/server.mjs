@@ -1,18 +1,20 @@
 // ZeroPrint UI server: serves the static build and proxies /rpc, /asp, /relayer on the same
 // origin so the page's CSP can be connect-src 'self'. No analytics, no third parties, no logs of bodies.
-import { createHash, randomBytes } from "node:crypto";
 import fs from "node:fs";
 import http from "node:http";
 import https from "node:https";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { createBridges } from "./bridges.mjs";
+import { allowed, loadPairs, offered, pairKeys } from "./swap-pairs.mjs";
 import { createBundleScanner } from "./launches/bundles.mjs";
 import { createEthScanner } from "./launches/eth.mjs";
 import { createInvestigator } from "./launches/investigate.mjs";
 import { createPeakFinder } from "./launches/peak.mjs";
 import { createSolScanner } from "./launches/sol.mjs";
 import { createSolRpc } from "./launches/solrpc.mjs";
+import { swapOf, swapUsd } from "./swaps.mjs";
+import { visitorId } from "./visitor.mjs";
 
 const HOST = process.env.HOST ?? "127.0.0.1";
 const PORT = Number(process.env.PORT ?? 8920);
@@ -23,6 +25,9 @@ const ASP_URL = process.env.ASP_URL ?? "http://127.0.0.1:8922";
 const RELAYER_URL = process.env.RELAYER_URL ?? "http://127.0.0.1:8921";
 const TRUSTED_PROXY = process.env.TRUSTED_PROXY ?? ""; // address of the public reverse proxy, if any
 const bridges = createBridges({ chainId: CONFIG.deployment.chainId, test: process.env.BRIDGE_TEST === "1" });
+// Swaps use the same two providers, from any origin the probe found a filling pair for. No list
+// yet (a test network) means nothing is held back.
+const SWAP_PAIRS = loadPairs(process.env.SWAP_PAIRS ?? path.join(import.meta.dirname, `swap-pairs.${CONFIG.deployment.chainId}.json`));
 // Footprint reads a wallet-tracer service (read-only)
 const TRACER_URL = process.env.TRACER_URL ?? "http://127.0.0.1:8810";
 // Robinhood Chain token launches, from a local launch index (read-only)
@@ -121,6 +126,113 @@ async function batchRpc(url, calls) {
   const j = await r.json();
   return Array.isArray(j) ? j.sort((a, b) => a.id - b.id).map((x) => x.result) : [];
 }
+const CHAIN_NATIVE = { 4663: "ETH", 1: "ETH", 56: "BNB", 8453: "ETH" };
+
+// Contracts are not wallets. The tracer reports every token transfer on its own, so a pool, a
+// router or a launch contract arrives on the page looking like a person who sent money. Here each
+// counterparty is asked whether it has code, and when it does the transaction is read back on our
+// own node: if value moved both ways in it, the leg becomes the one swap it really was.
+const OWN_RPC = { 4663: RPC_URL, ...(process.env.ETH_RPC ? { 1: process.env.ETH_RPC } : {}) };
+const SWAP_LEGS = 20; // transactions re-read per scan
+const codeCache = new Map(); // "chain:addr" -> boolean
+const tokenMetaCache = new Map(); // "chain:addr" -> { symbol, decimals } | null
+
+const abiString = (hex) => {
+  if (!hex || hex === "0x") return "";
+  const b = hex.slice(2);
+  if (b.length === 64) return Buffer.from(b, "hex").toString("utf8").replace(/\0+$/g, "").trim();
+  const len = parseInt(b.slice(64, 128), 16);
+  return Number.isFinite(len) ? Buffer.from(b.slice(128, 128 + len * 2), "hex").toString("utf8").trim() : "";
+};
+
+async function tokenMeta(chain, tokens) {
+  const todo = tokens.filter((t) => !tokenMetaCache.has(`${chain}:${t}`));
+  if (todo.length) {
+    const res = await batchRpc(
+      OWN_RPC[chain],
+      todo.flatMap((to) => [
+        { method: "eth_call", params: [{ to, data: "0x95d89b41" }, "latest"] },
+        { method: "eth_call", params: [{ to, data: "0x313ce567" }, "latest"] },
+      ]),
+    ).catch(() => []);
+    todo.forEach((t, i) => {
+      const decimals = parseInt(res[i * 2 + 1] ?? "", 16);
+      tokenMetaCache.set(`${chain}:${t}`, Number.isFinite(decimals) ? { symbol: abiString(res[i * 2]), decimals } : null);
+    });
+  }
+  return Object.fromEntries(tokens.map((t) => [t, tokenMetaCache.get(`${chain}:${t}`)]).filter(([, m]) => m));
+}
+
+// Ethereum and Base publish the native currency a contract pays out from inside a transaction;
+// Robinhood Chain does not. Where that list exists, a sale's proceeds can be read and the leg told
+// in full instead of showing only what went in.
+const INTERNAL_SLUG = { 1: "eth", 8453: "base" };
+async function internalPayouts(chain, me) {
+  if (!INTERNAL_SLUG[chain] || !ALCHEMY_KEY || !me) return new Map();
+  const j = await fetch(`https://${INTERNAL_SLUG[chain]}-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "alchemy_getAssetTransfers", params: [{ toAddress: me, category: ["internal"], order: "desc", maxCount: "0x3e8" }] }),
+    signal: AbortSignal.timeout(20_000),
+  })
+    .then((r) => r.json())
+    .catch(() => null);
+  const paid = new Map(); // tx hash -> wei
+  for (const t of j?.result?.transfers ?? []) {
+    const wei = BigInt(t.rawContract?.value ?? 0);
+    if (wei > 0n) paid.set(t.hash.toLowerCase(), (paid.get(t.hash.toLowerCase()) ?? 0n) + wei);
+  }
+  return paid;
+}
+
+async function markSwaps(trace) {
+  if (!trace?.in) return trace;
+  const side = (l) => (l.dir === "in" ? [l.from, l.to] : [l.to, l.from]); // [them, me]
+  const legs = [...trace.in, ...trace.out]
+    .filter((l) => l.kind === "wallet" && !l.self && l.from?.tx && l.from.tx === l.to?.tx && OWN_RPC[l.from.chain])
+    .slice(0, SWAP_LEGS);
+  if (!legs.length) return trace;
+
+  const byChain = new Map();
+  for (const l of legs) (byChain.get(l.from.chain) ?? byChain.set(l.from.chain, []).get(l.from.chain)).push(l);
+  await Promise.all(
+    [...byChain.entries()].map(async ([chain, list]) => {
+      try {
+        const url = OWN_RPC[chain];
+        const addrs = [...new Set(list.map((l) => side(l)[0].address.toLowerCase()))].filter((a) => !codeCache.has(`${chain}:${a}`));
+        if (addrs.length) {
+          const res = await batchRpc(url, addrs.map((a) => ({ method: "eth_getCode", params: [a, "latest"] })));
+          addrs.forEach((a, i) => codeCache.set(`${chain}:${a}`, !!res[i] && res[i] !== "0x"));
+        }
+        const contractLegs = list.filter((l) => codeCache.get(`${chain}:${side(l)[0].address.toLowerCase()}`));
+        for (const l of contractLegs) l.contract = true;
+        const hashes = [...new Set(contractLegs.map((l) => l.from.tx))];
+        if (!hashes.length) return;
+        const res = await batchRpc(url, hashes.flatMap((h) => [
+          { method: "eth_getTransactionByHash", params: [h] },
+          { method: "eth_getTransactionReceipt", params: [h] },
+        ]));
+        const fetched = new Map(hashes.map((h, i) => [h, { tx: res[i * 2], receipt: res[i * 2 + 1] }]));
+        const tokens = [...new Set([...fetched.values()].flatMap(({ receipt }) => (receipt?.logs ?? []).map((g) => g.address.toLowerCase())))];
+        const [meta, paid] = await Promise.all([tokens.length ? tokenMeta(chain, tokens) : {}, internalPayouts(chain, trace.address)]);
+        for (const l of contractLegs) {
+          const { tx, receipt } = fetched.get(l.from.tx) ?? {};
+          if (!tx || !receipt) continue;
+          const swap = swapOf(side(l)[1].address, tx, receipt, meta, CHAIN_NATIVE[chain] ?? "ETH", paid.get(l.from.tx.toLowerCase()) ?? 0n);
+          if (!swap) continue;
+          l.kind = "dex";
+          l.via = null;
+          l.asset = { ...l.asset, ...swap, usd: swapUsd(l.asset, swap) };
+          l.proof = { status: l.proof?.status ?? "verified", checks: [...(l.proof?.checks ?? []), { ok: true, text: `swap read from tx ${l.from.tx}: ${swap.amountIn} ${swap.in} -> ${swap.amountOut} ${swap.out}` }] };
+        }
+      } catch {
+        /* a node that cannot answer leaves the legs exactly as the tracer sent them */
+      }
+    }),
+  );
+  return trace;
+}
+
 async function markServices(trace) {
   if (!ALCHEMY_KEY || !trace?.in) return trace;
   const legs = [...trace.in, ...trace.out].filter((l) => l.kind === "wallet" && !l.self);
@@ -283,7 +395,6 @@ async function forward(res, url, init, timeoutMs = 60_000) {
 }
 
 // Health of every moving part, for /status. Public numbers only; cached 15 s.
-const STARTED = Date.now();
 let statusCache = { at: 0, value: null };
 async function rpc(method, params) {
   const r = await fetch(RPC_URL, {
@@ -317,11 +428,10 @@ async function statusReport() {
     pool: { address: d.pool, balance: poolBalance, ...(stats && { deposits: stats.deposits, approved: stats.approved, pending: stats.pending, denied: stats.denied, windowSec: stats.delaySec }) },
     screening: stats?.screening ?? null,
     keeper: health
-      ? { up: true, ok: health.ok, lastTickSec: health.at ? Math.round((Date.now() - health.at) / 1000) : null, error: health.error ?? null, address: health.keeper ?? null, guardian: health.guardian ?? null, balance: await balanceOf(health.keeper) }
+      ? { up: true, ok: health.ok, lastTickSec: health.at ? Math.round((Date.now() - health.at) / 1000) : null, error: health.error ?? null, address: health.keeper ?? null, guardian: health.guardian ?? null }
       : { up: false },
     relayer: { up: relayerUp, address: CONFIG.relayer ?? null, balance: relayerBalance },
     bridges: bridgeReach,
-    site: { upSec: Math.round((Date.now() - STARTED) / 1000) },
   };
   statusCache = { at: Date.now(), value };
   return value;
@@ -337,7 +447,7 @@ async function handle(req, res) {
   const p = url.pathname;
 
   // The IPFS copy of the site calls these from another origin (no cookies are involved anywhere).
-  if (/^\/(relayer|asp|bridge-api|status-api)(\/|$)/.test(p)) {
+  if (/^\/(relayer|asp|bridge-api|swap-api|status-api)(\/|$)/.test(p)) {
     res.setHeader("access-control-allow-origin", "*");
     if (req.method === "OPTIONS") {
       res.writeHead(204, { "access-control-allow-methods": "GET, POST", "access-control-allow-headers": "content-type", "access-control-max-age": "600" });
@@ -353,6 +463,43 @@ async function handle(req, res) {
       if (p === "/bridge-api/quote" && req.method === "POST") return sendJson(res, 200, await bridges.quote(JSON.parse(await readBody(req, 4096))));
       if (p === "/bridge-api/submit" && req.method === "POST") return sendJson(res, 200, await bridges.submit(JSON.parse(await readBody(req, 4096))));
       if (p === "/bridge-api/status") return sendJson(res, 200, await bridges.status(Object.fromEntries(url.searchParams)));
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
+    return sendJson(res, 404, { error: "not found" });
+  }
+
+  if (p === "/swap-api/routes") {
+    // ?all=1 answers with every chain and asset the bridges know, not only what the list offers.
+    // The probe has to ask that way: reading the narrowed offer, it could only ever confirm it,
+    // and a pair dropped once would never be looked at again.
+    const list = url.searchParams.get("all") === "1" ? null : SWAP_PAIRS;
+    return sendJson(res, 200, {
+      origins: offered(list, bridges.origins()).origins,
+      destinations: offered(list, bridges.routes()).destinations,
+      // what fills, so the page can stop offering a destination it would only refuse later
+      pairs: pairKeys(list),
+    });
+  }
+  if (p.startsWith("/swap-api/")) {
+    try {
+      if (p === "/swap-api/quote" && req.method === "POST") {
+        const want = JSON.parse(await readBody(req, 4096));
+        // The list shapes what the page offers; it does not forbid. A pair that is not on it is
+        // still quoted, and the providers answer for themselves - which is the only way the probe
+        // can find out whether a pair belongs on the list, and the only answer that is true for a
+        // token somebody pasted. Refusing here instead made the server a second opinion about
+        // what exists, and it was wrong twice.
+        const pair = allowed(SWAP_PAIRS, want);
+        const q = await bridges.quote(want);
+        return sendJson(res, 200, { ...q, ...(pair?.minIn ? { minIn: pair.minIn } : {}), ...(pair ? {} : { offlist: true }) });
+      }
+      if (p === "/swap-api/token") {
+        const token = await bridges.lookup(url.searchParams.get("chain"), url.searchParams.get("address") ?? "");
+        return sendJson(res, 200, { token: { symbol: token.symbol, name: token.name, decimals: token.decimals, providers: [token.relay && "relay", token.near && "near"].filter(Boolean) } });
+      }
+      if (p === "/swap-api/submit" && req.method === "POST") return sendJson(res, 200, await bridges.submit(JSON.parse(await readBody(req, 4096))));
+      if (p === "/swap-api/status") return sendJson(res, 200, await bridges.status(Object.fromEntries(url.searchParams)));
     } catch (e) {
       return sendJson(res, 400, { error: e.message });
     }
@@ -461,13 +608,13 @@ async function handle(req, res) {
     // The tracer limits traces per visitor; it gets a scrambled, daily-changing ID instead of
     // the IP, and the investigator's own background traces never use up a visitor's allowance.
     const r = await fetch(TRACER_URL + "/trace" + url.search, {
-      headers: { "x-forwarded-for": visitorId(req) },
+      headers: { "x-forwarded-for": visitorId(req, TRUSTED_PROXY) },
       signal: AbortSignal.timeout(180_000),
     });
     let body = await r.text();
     if (r.ok) {
       try {
-        body = JSON.stringify(await markServices(JSON.parse(body)));
+        body = JSON.stringify(await markSwaps(await markServices(JSON.parse(body))));
       } catch {
         /* pass the tracer's answer through unchanged */
       }

@@ -45,7 +45,8 @@
           <a href="#withdraw">Withdrawing privately</a>
           <a href="#meter">Privacy meter</a>
           <a href="#split">Split withdrawals</a>
-          <a href="#bridge">Withdraw to another chain</a>
+          <a href="#bridge">Another chain or token</a>
+          <a href="#swap">Swapping without a deposit</a>
           <a href="#checklist">Privacy checklist</a>
           <a href="#footprint">Footprint</a>
           <a href="#trouble">Troubleshooting</a>
@@ -200,17 +201,56 @@
           <p>Each part is a normal private withdrawal, and its proof is made in your browser, so <b>keep the tab open and unlocked</b>. If you close it, parts that came due run when you come back and unlock. The plan is stored in this browser only, encrypted with a key derived from your Zero Key, because it links your deposit to its recipients. Track or cancel it under <b>My deposits</b>.</p>
         </section>
         <section id="bridge">
-          <h2>Withdraw to another chain</h2>
-          <p>Pick a chain under <b>Receive on</b>: Solana, Base, Arbitrum, Ethereum, BNB Chain, Bitcoin or Zcash. The app asks Relay and NEAR Intents for quotes and uses the better one.</p>
+          <h2>Withdraw to another chain, or as another token</h2>
+          <p>Under <b>Receive</b>, pick where the money should land and what it should arrive as. The app asks Relay and NEAR Intents for quotes and uses the better one.</p>
+          <div class="tbl">
+            <table>
+              <tbody>
+                <tr><td>Robinhood Chain</td><td>ETH, USDG, PONS, CASHCAT, APE</td></tr>
+                <tr><td>Solana</td><td>SOL, USDC, USDT, PYUSD, cbBTC, USDe, BONK, JUP, RAY, TRUMP, PENGU, WIF</td></tr>
+                <tr><td>Base</td><td>ETH, USDC, cbBTC</td></tr>
+                <tr><td>Arbitrum</td><td>ETH, USDC, USDT</td></tr>
+                <tr><td>Ethereum</td><td>ETH, USDC, USDT, USDe</td></tr>
+                <tr><td>BNB Chain</td><td>BNB, USDC, USDT</td></tr>
+                <tr><td>Bitcoin · Zcash</td><td>BTC · ZEC (transparent addresses only)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Picking a token on Robinhood Chain is a swap rather than a bridge, and it works the same way. The recipient receives the token itself and never holds ETH, so it needs no gas and makes no transaction of its own.</p>
           <ol>
             <li>The withdrawal goes to a <b>one-time hop wallet</b> derived from your Zero Key (a new one for every bridge withdrawal, so two of them never share an address).</li>
             <li>The hop wallet sends the ETH to the bridge's one-time deposit address, with a transaction signed in your browser.</li>
             <li>The bridge delivers the coins to your recipient on the other chain, usually within a minute (Bitcoin takes longer).</li>
           </ol>
-          <p>If the bridge can't fill the order, it refunds to the hop wallet. <b>My deposits → Check hop wallets</b> lets you bridge it again or send it to a Robinhood Chain address.</p>
-          <div class="callout"><b>What a bridge adds, and what it doesn't.</b> Bridge records are public: anyone can follow the hop to the other chain and see the amount. The bridge never learns which deposit is yours, and your IP never reaches it (quotes go through this site). It does not make a small crowd bigger: amount and timing still matter. Bridging to Zcash and shielding there adds a much larger crowd.</div>
+          <p>If the bridge can't fill the order, it refunds to the hop wallet. <b>My deposits → Check hop wallets</b> lets you try again or send it to a Robinhood Chain address.</p>
+          <h3>Recipient addresses are checked, not guessed</h3>
+          <p>A withdrawal to another chain cannot be taken back, so the address is verified before any quote is asked for: Bitcoin and Zcash addresses have their checksum tested, Solana keys their exact length. A single mistyped character is refused here rather than at the bridge.</p>
+          <h3>If you hold tokens rather than ETH</h3>
+          <p>The pool takes ETH only, and that cannot be changed: the asset was fixed at deploy and the owner is renounced. To put token holdings through ZeroPrint, swap them to ETH in your own wallet first, then deposit. That swap is an ordinary public transaction from a wallet that is already yours, and it gives nothing away — the link is broken later, at the pool.</p>
+          <p>Two things matter when you do this: deposit a <b>round</b> amount, not whatever the swap happened to return, and <b>leave time</b> between the swap and the deposit. A swap for 0.0937 ETH followed within the minute by a deposit of 0.0937 ETH ties the two together on its own.</p>
+          <div class="callout"><b>What a bridge adds, and what it doesn't.</b> Bridge records are public: anyone can follow the hop to the other chain and see the amount. Receiving a rare token can expose you further, since few wallets hold it. The bridge never learns which deposit is yours, and your IP never reaches it (quotes go through this site). It does not make a small crowd bigger: amount and timing still matter. Bridging to Zcash and shielding there adds a much larger crowd.</div>
         </section>
 
+        <section id="swap">
+          <h2>Swapping without a deposit</h2>
+          <p>The <b>Swap</b> tab is for the other direction: you hold something somewhere — USDC on Solana, ETH on Base, BTC — and want a different asset at an address nothing of yours has touched. No key, no deposit, nothing signed here.</p>
+          <ol>
+            <li>Choose what you are sending and what you want. The destinations narrow to what can actually be delivered from that asset — the pairs a probe confirmed with both providers, rather than the ones they will quote a price for.</li>
+            <li>Enter the recipient address and a <b>refund address</b> of your own on the chain you are sending from. Both are checked properly, including the checksum — a wrong Bitcoin or Zcash address cannot be undone.</li>
+            <li>Ask for a quote. You get the better of Relay and NEAR Intents, a deposit address, and the exact amount to send.</li>
+            <li>Send that amount, in one transaction, from any wallet — or straight from an exchange withdrawal. The provider delivers to your recipient.</li>
+          </ol>
+          <h3>What it hides, and what it does not</h3>
+          <p>No transaction on any chain links the address you sent from to the address you received at. That is the whole of it. The provider filling the swap <b>sees both ends</b>: it is a company with records, like an exchange. The amount and the minute still match — an unusual amount leaving and arriving a few minutes later tells the story by itself. There is no crowd here: a swap has no anonymity set, only a broken trail.</p>
+          <h3>Into the pool</h3>
+          <p>The second mode ends differently. The swap pays a one-time wallet of your own Zero Key on this chain, and your browser deposits that into the pool. From there it is an ordinary deposit: the screening window, then a withdrawal at a time you choose, to any chain the Withdraw tab reaches. This is the mode with a crowd to hide in, and it costs a key, the wait, and the patience not to withdraw immediately.</p>
+          <p>It deposits exactly what arrived, less the gas the deposit itself costs. If you close the tab before the money lands, nothing is lost: <b>My deposits → Check hop wallets</b> finds it and offers <b>Deposit it into the pool</b>.</p>
+          <h3>Refunds and expiry</h3>
+          <p>The refund address is the one thing you cannot correct afterwards. A different amount than quoted, or one that arrives after the quote has run out, is sent back there by the provider.</p>
+          <p>A quote carries a countdown when the provider gives one. If it runs out before you send, the page says so and offers a new quote — it never replaces the address on screen, because you may already have copied it.</p>
+          <h3>Fees</h3>
+          <p>ZeroPrint takes nothing. What you see in the quote is the provider's price and all you pay.</p>
+        </section>
         <section id="checklist">
           <h2>Privacy checklist</h2>
           <p>The math is solid. Most leaks come from habits. Before you withdraw:</p>

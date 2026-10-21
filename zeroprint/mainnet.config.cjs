@@ -37,6 +37,8 @@ module.exports = {
       script: "server.mjs",
       interpreter: NODE,
       env: {
+        ETH_RPC: "http://127.0.0.1:8645", // our own Ethereum node
+        RELAY_API_KEY: secrets.RELAY_API_KEY,
         HOST: "127.0.0.1",
         PORT: "8940",
         RPC_URL,
@@ -44,7 +46,6 @@ module.exports = {
         RELAYER_URL: "http://127.0.0.1:8945",
         ...footprint,
         UI_CONFIG: `${ROOT}/zeroprint/ui/mainnet.config.json`,
-        FOOTPRINT_LIMIT: "off", // no per-visitor scan limit for now; remove this line to restore it
         TLS_CERT: `${ROOT}/zeroprint/local/tls/cert.pem`,
         TLS_KEY: `${ROOT}/zeroprint/local/tls/key.pem`,
       },

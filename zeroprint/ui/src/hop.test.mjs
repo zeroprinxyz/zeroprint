@@ -2,9 +2,9 @@
 // so these tests pin down the derivation and the gas arithmetic against a stubbed chain.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { parseEther } from "viem";
+import { parseEther, parseTransaction } from "viem";
 import { english, generateMnemonic, mnemonicToAccount } from "viem/accounts";
-import { DUST, HOP_GAS, hopAccount, hopReserve, hopScan, hopSend, nextHop } from "./hop.js";
+import { DUST, HOP_GAS, hopAccount, hopDeposit, hopReserve, hopScan, hopSend, nextHop } from "./hop.js";
 
 const KEY = "test test test test test test test test test test test junk"; // the public Anvil phrase
 const OTHER = generateMnemonic(english);
@@ -129,4 +129,52 @@ test("a failed transaction is reported, not silently treated as sent", async () 
 test("DUST is small enough to ignore and far below a usable balance", () => {
   assert.ok(DUST < parseEther("0.001"));
   assert.ok(DUST > 0n);
+});
+
+// A Deep swap ends with the hop paying the money into the pool itself. The hop holds what the
+// provider delivered and nothing else, so the deposit is that balance less what the transaction
+// will cost — get that wrong and the deposit either fails or strands the remainder on a wallet
+// nobody will look at again.
+const POOL_CALL = { to: "0xc4F56c7141A1E434046f12a373d864deD34196a7", data: "0xabcdef" };
+
+test("a deposit from a hop pays in everything the gas does not need", async () => {
+  const hop = hopAccount(KEY, 0);
+  const { pub, sent } = stubChain(have(hop.address, "0.5"));
+  const r = await hopDeposit(pub, chain, hop, POOL_CALL, parseEther("0.01"));
+  assert.equal(r.value, parseEther("0.49"));
+  assert.equal(sent.length, 1);
+  const tx = parseTransaction(sent[0]);
+  assert.equal(tx.to.toLowerCase(), POOL_CALL.to.toLowerCase());
+  assert.equal(tx.data, POOL_CALL.data);
+  assert.equal(tx.value, parseEther("0.49"));
+});
+
+test("a hop that cannot cover the gas is not asked to try", async () => {
+  const hop = hopAccount(KEY, 0);
+  const { pub, sent } = stubChain(have(hop.address, "0.005"));
+  await assert.rejects(() => hopDeposit(pub, chain, hop, POOL_CALL, parseEther("0.01")), /too low/i);
+  assert.equal(sent.length, 0, "nothing was broadcast");
+});
+
+test("a deposit of an exact amount leaves the rest where it is", async () => {
+  const hop = hopAccount(KEY, 0);
+  const { pub, sent } = stubChain(have(hop.address, "0.5"));
+  const r = await hopDeposit(pub, chain, hop, { ...POOL_CALL, value: parseEther("0.1") }, parseEther("0.01"));
+  assert.equal(r.value, parseEther("0.1"));
+  assert.equal(parseTransaction(sent[0]).value, parseEther("0.1"));
+});
+
+test("a deposit under the pool's minimum is refused here, not on chain", async () => {
+  const hop = hopAccount(KEY, 0);
+  const { pub, sent } = stubChain(have(hop.address, "0.0005"));
+  await assert.rejects(() => hopDeposit(pub, chain, hop, POOL_CALL, parseEther("0.0001"), parseEther("0.001")), /minimum/i);
+  assert.equal(sent.length, 0, "nothing was broadcast");
+});
+
+test("a fee rise between the reserve and the send lowers the cap rather than failing", async () => {
+  const hop = hopAccount(KEY, 0);
+  const { pub, sent } = stubChain(have(hop.address, "0.5"), { baseFee: 30_000_000n });
+  const r = await hopDeposit(pub, chain, hop, POOL_CALL, parseEther("0.01"));
+  assert.equal(r.value, parseEther("0.49"));
+  assert.equal(sent.length, 1);
 });

@@ -1,0 +1,4838 @@
+{
+  "generatedAt": "2026-10-21T09:51:09.548Z",
+  "source": "https://zeroprint.xyz",
+  "chainId": 4663,
+  "pairs": [
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "1000000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "bsc",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "bsc",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "ETH",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "arb",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "bsc",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "bsc",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "APE",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "PYUSD",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "RAY",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDC",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "APE",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "PYUSD",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "RAY",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "arb",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "40000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "40000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "arb",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "40000"
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "40000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "40000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "40000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "40000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "40000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "40000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "40000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "40000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "40000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "near",
+      "minIn": "40000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "40000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "40000"
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "40000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "base",
+      "originToken": "cbBTC",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "10000000000000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "ETH",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "base",
+      "originToken": "USDC",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "arb",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "bsc",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "bsc",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "eth",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "hood",
+      "destToken": "APE",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "PYUSD",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "RAY",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "BNB",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "30000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "APE",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "PYUSD",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "RAY",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "arb",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "bsc",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "RAY",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "bsc",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "btc",
+      "originToken": "BTC",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "40000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "bsc",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "ETH",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "arb",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "APE",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "PYUSD",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "RAY",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDC",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDe",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDe",
+      "dest": "bsc",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDe",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDe",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDe",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000000000000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "arb",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "bsc",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "eth",
+      "originToken": "USDT",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "CASHCAT",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "arb",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "bsc",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "bsc",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "APE",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "10000000000000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "PYUSD",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "RAY",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "10000000000000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "near",
+      "minIn": "10000000000000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "10000000000000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "ETH",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "10000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "PONS",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "100000000000000000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "arb",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "eth",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "hood",
+      "destToken": "APE",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "PYUSD",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "RAY",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "hood",
+      "originToken": "USDG",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "1000000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "100000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "100000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "100000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "100000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PENGU",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "1000000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "arb",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "sol",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "sol",
+      "destToken": "RAY",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "PYUSD",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "200000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "200000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "arb",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "200000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "200000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "200000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "bsc",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "200000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "200000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "eth",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "200000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "hood",
+      "destToken": "APE",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "200000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "200000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "200000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "PYUSD",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "RAY",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "200000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "200000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "USDe",
+      "provider": "relay",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "200000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "SOL",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "200000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "100000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "relay",
+      "minIn": "100000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "100000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "TRUMP",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "bsc",
+      "destToken": "BNB",
+      "provider": "relay",
+      "minIn": "2500000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "bsc",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "bsc",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDC",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "25000000",
+      "also": [
+        "relay"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "APE",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "BONK",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "cbBTC",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "JUP",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "PYUSD",
+      "provider": "relay",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "relay",
+      "minIn": "25000000",
+      "also": [
+        "near"
+      ]
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "USDT",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "25000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "hood",
+      "destToken": "CASHCAT",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "hood",
+      "destToken": "PONS",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "sol",
+      "destToken": "PENGU",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "sol",
+      "destToken": "TRUMP",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "sol",
+      "originToken": "WIF",
+      "dest": "zec",
+      "destToken": "ZEC",
+      "provider": "near",
+      "minIn": "100000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "arb",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "arb",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "base",
+      "destToken": "cbBTC",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "base",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "base",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "btc",
+      "destToken": "BTC",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "eth",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "eth",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "eth",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "hood",
+      "destToken": "ETH",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "hood",
+      "destToken": "USDG",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "sol",
+      "destToken": "SOL",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "sol",
+      "destToken": "USDC",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "sol",
+      "destToken": "USDT",
+      "provider": "near",
+      "minIn": "50000000"
+    },
+    {
+      "origin": "zec",
+      "originToken": "ZEC",
+      "dest": "sol",
+      "destToken": "WIF",
+      "provider": "near",
+      "minIn": "50000000"
+    }
+  ]
+}

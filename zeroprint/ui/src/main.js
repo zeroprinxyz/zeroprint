@@ -5,11 +5,14 @@ import { startShade } from "./bgfx.js";
 import { boot } from "./boot.js";
 import { createBridge, validRecipient } from "./bridge.js";
 import { createShade, settle } from "./core.js";
-import { DUST, hopAccount, hopReserve, hopScan, hopSend, nextHop } from "./hop.js";
+import { DUST, depositReserve, hopAccount, hopDeposit, hopReserve, hopScan, hopSend, nextHop } from "./hop.js";
 import { forgetKey, hasStoredKey, saveKey, unlockKey } from "./keystore.js";
 import { mountMobileNav } from "./mnav.js";
+import { mountPicker } from "./picker.js";
+import { enableDeep, viewSwap } from "./swap.js";
 import { ROUND, amountCounts, isRound, meterHtml, privacyCheck } from "./privacy.js";
 import { loadLocal, saveLocal } from "./store.js";
+import { swapHops } from "./swapstore.js";
 
 mountMobileNav();
 
@@ -313,6 +316,7 @@ function viewDeposit(el) {
   el.innerHTML = `
     <h2>Deposit ETH</h2>
     <p class="sub">Your wallet sends ETH to the pool with a commitment made from your Zero Key. After about ${Math.round(cfg.delaySec / 60)} min the ASP screens it; then you can withdraw privately.</p>
+    <div class="note">A pool is only as private as the crowd in it. Every withdrawal could have come from any approved deposit of at least that size, so each deposit makes the others harder to single out — including yours, and including the ones that arrive after you. Early deposits are the thinnest; they get better as the pool fills.</div>
     ${S.mnemonic ? "" : needKey}
     <label>Amount (min ${min} ETH)</label>
     <input id="amt" class="amount" inputmode="decimal" placeholder="0.1" />
@@ -469,13 +473,16 @@ const fmtUnits = (v, decimals, dp = 6) => {
   const [i, f = ""] = s.split(".");
   return f ? `${i}.${f.slice(0, dp).replace(/0+$/, "") || "0"}` : i;
 };
-const usedHops = () => (S.local?.bridges ?? []).map((b) => b.hop);
+// Every hop this browser has given out: the bridge's, and the ones a swap into the pool is
+// waiting on. A hop awaiting a swap is empty and untouched, so without this it would be handed
+// out again and the swap's money swept to whatever the second use quoted.
+const usedHops = () => [...(S.local?.bridges ?? []).map((b) => b.hop), ...swapHops()];
 
 /**
  * Withdraws `amount` from the deposit with `label` to `recipient` on `dest` ("rh" = this chain,
  * else a bridge route). Bridge: pool -> fresh hop wallet -> bridge deposit address.
  */
-async function doWithdraw({ label, amount, dest, recipient }, step = () => {}) {
+async function doWithdraw({ label, amount, dest, token, recipient }, step = () => {}) {
   await loadAccount();
   const note = S.notes.find((x) => x.label === label && x.state === "approved");
   if (!note || note.balance < amount) throw new Error("Not enough approved balance left in this deposit");
@@ -493,8 +500,8 @@ async function doWithdraw({ label, amount, dest, recipient }, step = () => {}) {
   const hop = hopAccount(S.mnemonic, hopIndex);
   const q0 = await shade.quote(amount, hop.address);
   const net = amount - (amount * BigInt(q0.feeBPS)) / 10_000n;
-  const q = await bridge.quote({ route: dest, amount: net - (await hopReserve(shade.pub)), recipient, refundTo: hop.address });
-  const rec = { id: crypto.randomUUID(), at: Math.floor(Date.now() / 1000), label, hop: hopIndex, hopAddress: hop.address, dest, recipient, amount: amount.toString(), quote: q, state: "withdrawing" };
+  const q = await bridge.quote({ route: dest, token, amount: net - (await hopReserve(shade.pub)), recipient, refundTo: hop.address });
+  const rec = { id: crypto.randomUUID(), at: Math.floor(Date.now() / 1000), label, hop: hopIndex, hopAddress: hop.address, dest, token, recipient, amount: amount.toString(), quote: q, state: "withdrawing" };
   S.local.bridges.unshift(rec);
   await saveL();
   const r = await shade.withdraw(S.acct, note, amount, hop.address, step);
@@ -537,7 +544,7 @@ async function watchBridge(rec, maxMs) {
 }
 
 /** Split: round equal parts at random times inside the window, at least 10 min apart. */
-function makePlan({ label, total, parts, hours, dest, recipients }) {
+function makePlan({ label, total, parts, hours, dest, token, recipients }) {
   const part = ((total / BigInt(parts)) / MIN_PART) * MIN_PART;
   if (part < MIN_PART) throw new Error("Each part must be at least 0.001 ETH");
   const now = Math.floor(Date.now() / 1000);
@@ -549,6 +556,7 @@ function makePlan({ label, total, parts, hours, dest, recipients }) {
     created: now,
     label,
     dest,
+    token,
     parts: times.map((at, i) => ({ amount: part.toString(), at, to: recipients[i % recipients.length], state: "todo" })),
   };
 }
@@ -564,7 +572,7 @@ async function runPlans(force) {
     try {
       p.state = "running";
       await saveL();
-      const r = await doWithdraw({ label: plan.label, amount: BigInt(p.amount), dest: plan.dest, recipient: p.to });
+      const r = await doWithdraw({ label: plan.label, amount: BigInt(p.amount), dest: plan.dest, token: plan.token, recipient: p.to });
       Object.assign(p, { state: "done", tx: r.txHash, doneAt: Math.floor(Date.now() / 1000) });
       toast(`Split plan: part sent (${eth(BigInt(p.amount))} ETH).`);
     } catch (e) {
@@ -596,10 +604,13 @@ function viewWithdraw(el) {
     <label>Amount</label>
     <div class="row"><input id="amt" class="amount" inputmode="decimal" style="flex:1" /><button class="chip" id="max">Max</button></div>
     <div class="chips" id="wchips"></div>
-    <label>Receive on</label>
-    <select id="dest"><option value="rh">${esc(cfg.chainName)} (this chain)</option>${routes
-      .map((r) => `<option value="${r.id}">${esc(r.name)} · ${esc(r.symbol)}</option>`)
-      .join("")}</select>
+    <label>Receive</label>
+    <div class="row two">
+      <select id="dest"><option value="rh">${esc(cfg.chainName)} · ETH</option>${routes
+        .map((r) => `<option value="${r.id}">${esc(r.name)}</option>`)
+        .join("")}</select>
+      <select id="token" hidden></select>
+    </div>
     <div id="destNote"></div>
     <label id="toLabel">Recipient (a fresh wallet)</label>
     <input id="to" placeholder="0x…" autocomplete="off" spellcheck="false" />
@@ -640,6 +651,7 @@ function viewWithdraw(el) {
     $("#wchips").querySelectorAll(".chip").forEach((c) => (c.onclick = () => setAmt(c.dataset.v)));
   };
   chips();
+  const picks = { dest: mountPicker($("#dest")), token: mountPicker($("#token"), { kind: "token" }) };
   $("#max").onclick = () => setAmt(formatEther(note().balance));
   let timer;
   let seq = 0;
@@ -654,15 +666,24 @@ function viewWithdraw(el) {
     if (splitOn() && !$("#tos").value && $("#to").value) $("#tos").value = $("#to").value;
     update();
   });
+  const tokenValue = () => $("#token")?.value || undefined;
   $("#dest").addEventListener("input", () => {
     const r = routeOf($("#dest").value);
+    const tok = $("#token");
+    tok.hidden = !r || r.tokens.length < 2;
+    tok.innerHTML = (r?.tokens ?? []).map((t) => `<option value="${esc(t.symbol)}">${esc(t.symbol)}${t.name && t.name !== t.symbol ? ` · ${esc(t.name)}` : ""}</option>`).join("");
     $("#toLabel").textContent = r ? `Recipient on ${r.name} (a fresh wallet)` : "Recipient (a fresh wallet)";
     $("#to").placeholder = r ? { evm: "0x…", solana: "Solana address", btc: "bc1… / 1… / 3…", zec: "t1… (transparent)" }[r.kind] : "0x…";
+    picks.token.refresh();
+    picks.dest.refresh();
+    const vias = [...new Set((r?.tokens ?? []).flatMap((t) => t.providers))].map((p) => ({ relay: "Relay", near: "NEAR Intents", echo: "echo" })[p] ?? p);
+    const path = ["pool", "a one-time hop wallet", ...(vias.length ? [vias.join(" or ")] : []), r?.name].filter(Boolean).join(" → ");
     $("#destNote").innerHTML = r
-      ? `<div class="note">Goes <b>pool → a one-time hop wallet → ${r.providers.map((p) => (p === "relay" ? "Relay" : p === "near" ? "NEAR Intents" : p)).join(" or ")} → ${esc(r.name)}</b>. The hop wallet comes from your Zero Key; if the bridge refunds, the ETH lands there and you can retry from <a href="#mine">My deposits</a>. The bridge sees the amount and the destination, never your deposit.</div>`
+      ? `<div class="note">Goes <b>${esc(path)}</b>. The hop wallet comes from your Zero Key; if the swap cannot be filled, the ETH lands back there and you can retry from <a href="#mine">My deposits</a>. The bridge sees the amount and the destination, never your deposit.</div>`
       : "";
     update();
   });
+  $("#token").addEventListener("input", update);
 
   function recipients() {
     const r = routeOf($("#dest").value);
@@ -673,6 +694,7 @@ function viewWithdraw(el) {
 
   async function check() {
     const my = ++seq;
+    if (!$("#dest")) return; // the view was replaced while this was queued
     const n = note();
     const warn = [];
     let ok = true;
@@ -742,7 +764,7 @@ function viewWithdraw(el) {
         S.previewHop ??= hopAccount(S.mnemonic, await nextHop(shade.pub, S.mnemonic, usedHops())).address;
         const q0 = await shade.quote(each, S.previewHop);
         const net = each - (each * BigInt(q0.feeBPS)) / 10_000n;
-        const q = await bridge.quote({ route: route.id, amount: net - (await hopReserve(shade.pub)), recipient: list[0], refundTo: S.previewHop });
+        const q = await bridge.quote({ route: route.id, token: tokenValue(), amount: net - (await hopReserve(shade.pub)), recipient: list[0], refundTo: S.previewHop });
         if (my !== seq) return;
         const via = { relay: "Relay", near: "NEAR Intents", echo: "echo" }[q.provider];
         $("#quote").className = "note good";
@@ -764,7 +786,7 @@ function viewWithdraw(el) {
     const { list } = recipients();
     if (splitOn()) {
       try {
-        const plan = makePlan({ label: n.label, total: amount, parts: Number($("#parts").value), hours: Number($("#spread").value), dest, recipients: list });
+        const plan = makePlan({ label: n.label, total: amount, parts: Number($("#parts").value), hours: Number($("#spread").value), dest, token: tokenValue(), recipients: list });
         S.local.plans.unshift(plan);
         await saveL();
         toast(`Plan saved: ${plan.parts.length} parts. Keep this tab open.`);
@@ -783,7 +805,7 @@ function viewWithdraw(el) {
     };
     try {
       await withBusy($("#go"), async () => {
-        const r = await doWithdraw({ label: n.label, amount, dest, recipient: list[0] }, step);
+        const r = await doWithdraw({ label: n.label, amount, dest, token: tokenValue(), recipient: list[0] }, step);
         S.previewHop = null;
         if (!r.bridge) {
           lis.forEach((li) => (li.className = "done"));
@@ -823,7 +845,7 @@ function renderLocalPanels(host) {
         const left = p.parts.filter((x) => x.state !== "done" && x.state !== "failed" && x.state !== "cancelled");
         const r = routeOf(p.dest);
         return `<div class="plan">
-          <div class="row"><b style="flex:1">Split plan · ${p.parts.length} × ${eth(BigInt(p.parts[0].amount))} ETH → ${esc(r?.name ?? cfg.chainName)}</b>
+          <div class="row"><b style="flex:1">Split plan · ${p.parts.length} × ${eth(BigInt(p.parts[0].amount))} ETH → ${esc(p.token ? `${p.token} on ${r?.name ?? p.dest}` : (r?.name ?? cfg.chainName))}</b>
             ${left.length ? `<button class="btn ghost sm" data-run="${pi}">Run next now</button><button class="btn danger sm" data-cancel="${pi}">Cancel rest</button>` : `<button class="btn ghost sm" data-del="${pi}">Remove</button>`}</div>
           <ol class="parts">${p.parts
             .map(
@@ -869,7 +891,7 @@ function drawHops(host) {
     .map((h) => {
       const rec = S.local.bridges.find((b) => b.hop === h.i);
       return `<div class="note warn"><b>${eth(h.balance, 6)} ETH</b> in hop wallet #${h.i} <span class="mono">${short(h.address)}</span>${rec ? ` (bridge to ${esc(routeOf(rec.dest)?.name ?? rec.dest)} <span class="mono">${esc(short(rec.recipient))}</span>)` : ""}
-        <div class="row" style="margin-top:8px">${rec ? `<button class="btn sm" data-retry="${h.i}">Bridge it again</button>` : ""}<button class="btn ghost sm" data-sweep="${h.i}">Send to a ${esc(cfg.chainName)} address</button></div></div>`;
+        <div class="row" style="margin-top:8px">${rec ? `<button class="btn sm" data-retry="${h.i}">Bridge it again</button>` : ""}<button class="btn sm" data-pool="${h.i}">Deposit it into the pool</button><button class="btn ghost sm" data-sweep="${h.i}">Send to a ${esc(cfg.chainName)} address</button></div></div>`;
     })
     .join("");
   host.querySelectorAll("[data-retry]").forEach((b) => (b.onclick = () => withBusy(b, async () => {
@@ -878,7 +900,7 @@ function drawHops(host) {
     const hop = hopAccount(S.mnemonic, i);
     try {
       const bal = await shade.pub.getBalance({ address: hop.address });
-      const q = await bridge.quote({ route: rec.dest, amount: bal - (await hopReserve(shade.pub)), recipient: rec.recipient, refundTo: hop.address });
+      const q = await bridge.quote({ route: rec.dest, token: rec.token, amount: bal - (await hopReserve(shade.pub)), recipient: rec.recipient, refundTo: hop.address });
       if (!confirm(`Bridge ${eth(bal, 6)} ETH again → about ${fmtUnits(q.amountOut, q.decimals)} ${q.symbol} on ${routeOf(rec.dest)?.name}?`)) return;
       await bridgeFromHop(rec, hop, q);
       toast("Sent to the bridge. Checking…");
@@ -889,6 +911,27 @@ function drawHops(host) {
     S.hops = null;
     render();
   })));
+  // ETH on a hop can go back into the pool rather than on to a wallet: that is how a swap that
+  // was paid here while the tab was closed is finished later.
+  host.querySelectorAll("[data-pool]").forEach((b) => (b.onclick = () => withBusy(b, async () => {
+    const i = Number(b.dataset.pool);
+    try {
+      const hop = hopAccount(S.mnemonic, i);
+      const reserve = await depositReserve(shade.pub);
+      const value = (await shade.pub.getBalance({ address: hop.address })) - reserve;
+      if (value <= 0n) return toast("Not enough there to cover the deposit's gas", true);
+      if (!confirm(`Deposit ${eth(value, 6)} ETH from hop wallet #${i} into the pool?`)) return;
+      await hopDeposit(shade.pub, shade.chain, hop, shade.depositTx(S.acct, value), reserve, S.pool?.minimumDepositAmount ?? 0n);
+      await settle();
+      S.notes = await shade.notes(S.acct).catch(() => S.notes);
+      toast(`Deposited ${eth(value, 6)} ETH. It needs the screening window before you can withdraw it.`);
+    } catch (e) {
+      toast(errMsg(e), true);
+    }
+    S.hops = null;
+    render();
+  })));
+
   host.querySelectorAll("[data-sweep]").forEach((b) => (b.onclick = () => withBusy(b, async () => {
     const to = prompt(`Send everything in hop wallet #${b.dataset.sweep} to which ${cfg.chainName} address? Use a fresh wallet, not your deposit wallet.`);
     if (!to) return;
@@ -953,14 +996,22 @@ async function viewVerify(el) {
   $("#live").innerHTML = live.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
 }
 
-const views = { deposit: viewDeposit, withdraw: viewWithdraw, mine: viewMine, verify: viewVerify };
+const views = { deposit: viewDeposit, withdraw: viewWithdraw, swap: viewSwap, mine: viewMine, verify: viewVerify };
 
 function render() {
   renderKey();
   const [v = "deposit", qs = ""] = location.hash.slice(1).split("?");
   if (v === "footprint") return void location.replace(`/footprint${qs ? `?${qs}` : ""}`); // has its own page now
   const view = views[v] ? v : "deposit";
+  // Two levels: the section pills say which part of the site you are in, the tabs which part of
+  // the pool. A swap needs no key and no deposit, so neither the key panel nor the pool tabs
+  // belong on screen while you are there.
+  const section = view === "swap" ? "#swap" : view === "verify" ? "#verify" : "#deposit";
+  document.querySelectorAll("#segnav a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === section));
   document.querySelectorAll("#tabs a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === `#${view}`));
+  const pool = section === "#deposit";
+  $("#tabs").hidden = !pool;
+  $("#keybox").hidden = !pool;
   views[view]($("#view"), new URLSearchParams(qs));
 }
 
@@ -972,6 +1023,31 @@ async function refreshStats() {
     $("#st-delay").textContent = st.delaySec >= 3600 ? `${st.delaySec / 3600} h` : `${Math.round(st.delaySec / 60)} min`;
   } catch {}
 }
+
+// What the Swap tab needs to finish a swap inside the pool. It never reaches into this file's
+// state itself; everything it can do with a key is one of these four things.
+enableDeep({
+  chainName: cfg.chainName,
+  waitText: `${Math.round(cfg.delaySec / 60)}-minute screening`,
+  unlocked: () => !!S.mnemonic,
+  async freshHop() {
+    const index = await nextHop(shade.pub, S.mnemonic, usedHops());
+    return { index, address: hopAccount(S.mnemonic, index).address };
+  },
+  async depositFromHop(index) {
+    await loadAccount();
+    const hop = hopAccount(S.mnemonic, index);
+    const reserve = await depositReserve(shade.pub);
+    const balance = await shade.pub.getBalance({ address: hop.address });
+    const value = balance - reserve;
+    if (value <= 0n) throw new Error("Nothing has arrived on that wallet yet");
+    const sent = await hopDeposit(shade.pub, shade.chain, hop, shade.depositTx(S.acct, value), reserve, S.pool?.minimumDepositAmount ?? 0n);
+    await settle();
+    S.notes = await shade.notes(S.acct).catch(() => S.notes);
+    S.hops = null;
+    return sent;
+  },
+});
 
 boot({ cfg, shade });
 // Mainnet / Testnet switch (each network is its own site)

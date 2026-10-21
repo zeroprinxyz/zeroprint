@@ -73,23 +73,32 @@ async function draw() {
   if (!k.up) rows.push(row("bad", "Keeper", "offline", "deposits still get approved: queue and approve yourself from the deposit wallet"));
   else {
     const stale = k.lastTickSec == null || k.lastTickSec > 120;
-    const kb = k.balance == null ? null : BigInt(k.balance);
-    rows.push(row(!k.ok || stale ? "bad" : "ok", "Keeper", k.ok ? "running" : `error: ${esc(k.error ?? "?")}`, `last check ${ago(k.lastTickSec)}${k.guardian ? " · guardian" : ""}`));
-    if (k.address)
-      rows.push(row(kb == null ? "warn" : kb < 50_000_000_000_000n ? "bad" : kb < 200_000_000_000_000n ? "warn" : "ok", "Keeper gas", `${eth(k.balance)} ETH`, explorer(k.address)));
+    // Whether it is running is what a reader needs. Its gas balance is our business: a small
+    // number beside the word "keeper" frightens people about a service whose failure costs them
+    // nothing - without it anyone can queue and approve their own deposit, as the row below says.
+    rows.push(
+      row(
+        !k.ok || stale ? "bad" : "ok",
+        "Keeper",
+        k.ok ? "running" : `error: ${esc(k.error ?? "?")}`,
+        `last check ${ago(k.lastTickSec)}${k.guardian ? " · guardian" : ""}${k.address ? ` · ${explorer(k.address)}` : ""}`,
+      ),
+    );
   }
   // relayer
   const r = s.relayer;
   const rb = r.balance == null ? null : BigInt(r.balance);
   const left = rb == null ? null : rb / WITHDRAW_GAS_ETH;
   rows.push(row(r.up ? "ok" : "bad", "Relayer", r.up ? "online" : "offline", r.up ? "pays the gas of private withdrawals" : "you can still withdraw directly from a fresh wallet that has gas"));
-  if (r.address) rows.push(row(left == null ? "warn" : left < 10n ? "bad" : left < 50n ? "warn" : "ok", "Relayer gas", `${eth(r.balance)} ETH`, `≈ ${left ?? "?"} withdrawals left · ${explorer(r.address)}`));
+  // The relayer's figure stays, as how many withdrawals it can still pay for rather than a
+  // balance: that is the part a reader is deciding on.
+  if (r.address) rows.push(row(left == null ? "warn" : left < 10n ? "bad" : left < 50n ? "warn" : "ok", "Relayer gas", left == null ? "unknown" : `≈ ${left} withdrawals left`, explorer(r.address)));
   // bridges
   if (s.bridges) {
     rows.push(row(s.bridges.relay ? "ok" : "bad", "Bridge: Relay", s.bridges.relay ? "reachable" : "unreachable"));
     rows.push(row(s.bridges.near ? "ok" : "bad", "Bridge: NEAR Intents", s.bridges.near ? "reachable" : "unreachable"));
   }
-  rows.push(row("ok", "Site", "online", `up ${ago(s.site.upSec).replace(" ago", "")}`));
+
 
   const worst = rows.some((x) => x.includes("st-row bad")) ? "bad" : rows.some((x) => x.includes("st-row warn")) ? "warn" : "ok";
   view.innerHTML = `

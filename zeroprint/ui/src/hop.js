@@ -6,6 +6,7 @@ import { mnemonicToAccount } from "viem/accounts";
 
 const PATH = (i) => `m/44'/60'/7'/0/${i}`;
 export const HOP_GAS = 60_000n;
+export const DEPOSIT_GAS = 900_000n; // a pool deposit is a proof-sized call, not a transfer
 export const DUST = 20_000_000_000_000n; // 0.00002 ETH: below this a hop counts as empty
 
 export const hopAccount = (mnemonic, i) => mnemonicToAccount(mnemonic, { path: PATH(i) });
@@ -21,6 +22,11 @@ async function fees(pub) {
 /** ETH to keep on the hop for its one transaction. */
 export async function hopReserve(pub) {
   return HOP_GAS * (await fees(pub)).maxFeePerGas;
+}
+
+/** The same, for the pool deposit a Deep swap ends with. */
+export async function depositReserve(pub) {
+  return DEPOSIT_GAS * (await fees(pub)).maxFeePerGas;
 }
 
 /** Hops in use: balance or history. Stops after 3 untouched ones in a row. */
@@ -45,6 +51,36 @@ export async function nextHop(pub, mnemonic, used = []) {
     if (balance === 0n && nonce === 0) return i;
   }
   throw new Error("no free hop wallet");
+}
+
+/**
+ * Signs and broadcasts a prepared call from a hop — the pool's own deposit, in practice. Without
+ * a `value` the hop pays in everything `reserve` does not need, because what a swap delivered is
+ * all it will ever hold: anything left behind stays on a wallet nobody has reason to open again.
+ */
+export async function hopDeposit(pub, chain, account, call, reserve, minimum = 0n) {
+  const { baseFee, ...f } = await fees(pub);
+  const balance = await pub.getBalance({ address: account.address });
+  const value = call.value ?? balance - reserve;
+  if (value <= 0n || balance < value + reserve) throw new Error("hop wallet balance too low for this deposit");
+  // The pool refuses anything under its minimum, and finding that out on chain costs the gas and
+  // tells the person nothing.
+  if (minimum && value < minimum) throw new Error(`the pool's minimum deposit is ${minimum} wei and only ${value} arrived`);
+  const est = await pub.estimateGas({ account: account.address, to: call.to, data: call.data, value }).catch(() => DEPOSIT_GAS);
+  const gas = (est * 12n) / 10n > DEPOSIT_GAS ? DEPOSIT_GAS : (est * 12n) / 10n;
+  // The reserve was measured a moment ago; if the base fee rose since, lower the cap rather than
+  // let the node reject a transaction the wallet can no longer pay for.
+  if (value + gas * f.maxFeePerGas > balance) {
+    f.maxFeePerGas = (balance - value) / gas;
+    if (f.maxPriorityFeePerGas > f.maxFeePerGas - baseFee) f.maxPriorityFeePerGas = 0n;
+  }
+  if (f.maxFeePerGas < baseFee) throw new Error("hop wallet balance too low for this deposit");
+  const nonce = await pub.getTransactionCount({ address: account.address, blockTag: "pending" });
+  const serializedTransaction = await account.signTransaction({ chainId: chain.id, type: "eip1559", to: call.to, data: call.data, value, gas, nonce, ...f });
+  const hash = await pub.sendRawTransaction({ serializedTransaction });
+  const r = await pub.waitForTransactionReceipt({ hash });
+  if (r.status !== "success") throw new Error(`hop deposit failed ${hash}`);
+  return { hash, value };
 }
 
 /** Signs here and broadcasts a plain transfer from a hop. value "all" sends everything but the gas. */

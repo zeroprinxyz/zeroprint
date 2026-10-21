@@ -1901,3 +1901,169 @@ label.inl select {
 .mnav .gh.x::after {
   content: "X";
 }
+.row.two > select {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The chain picker: a button and a list drawn over a real <select>, which keeps the value. */
+.pick {
+  position: relative;
+}
+.pick-native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.pick-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--bg2);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.pick-btn:focus-visible,
+.pick-btn[aria-expanded="true"] {
+  border-color: var(--accent);
+  outline: none;
+}
+.pick-btn > span:first-of-type {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pick-caret {
+  opacity: 0.55;
+}
+.mark {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.pick-list {
+  position: absolute;
+  z-index: 40;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  max-height: 290px;
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg2);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+.pick-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+.pick-btn:active {
+  border-color: var(--accent);
+}
+.pick-mark {
+  display: flex;
+  flex: none;
+}
+.pick-opt.at,
+.pick-opt:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.pick-opt.on {
+  color: var(--accent);
+}
+.row.two > .pick {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Section pills in the header: which part of the site you are in. The pool's own tabs sit below. */
+.segnav {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.035);
+}
+.segnav a {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--dim);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.segnav a:hover {
+  color: var(--text);
+}
+.segnav a.on {
+  background: var(--bg2);
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+@media (max-width: 860px) {
+  .segnav {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* The token list opens with a search field: type to narrow it, or paste an address nobody listed. */
+.pick-search {
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.pick-search:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+.pick-rows {
+  max-height: 230px;
+  overflow: auto;
+}
+.pick-say:not(:empty) {
+  padding: 8px 10px 4px;
+}
+.pick-none {
+  font-size: 13px;
+  color: var(--dim);
+}
+.pick-none.bad {
+  color: var(--bad, #ff6b81);
+}
+.pick-ask {
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 9px;
+  border: 1px dashed var(--line);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+.pick-ask:hover {
+  border-color: var(--accent);
+}

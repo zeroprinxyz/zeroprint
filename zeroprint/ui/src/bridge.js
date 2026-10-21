@@ -14,11 +14,11 @@ export function createBridge(base) {
       routes ??= await fetch(`${base}/routes`, { cache: "no-store" }).then(json).then((j) => j.routes, () => []);
       return routes;
     },
-    async quote({ route, amount, recipient, refundTo }) {
+    async quote({ route, token, amount, recipient, refundTo }) {
       const q = await fetch(`${base}/quote`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ route, amount: amount.toString(), recipient, refundTo }),
+        body: JSON.stringify({ route, token, amount: amount.toString(), recipient, refundTo }),
       }).then(json);
       if (!isAddress(q.depositAddress) || BigInt(q.amountIn) !== BigInt(amount)) throw new Error("bridge quote does not match the request");
       return q;

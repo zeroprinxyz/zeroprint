@@ -40,6 +40,7 @@
         </p>
         <div class="row center">
           <a class="btn big" href="/app">Launch App →</a>
+          <a class="btn ghost big" href="/app#swap">Swap</a>
           <a class="btn ghost big" href="#how">How it works</a>
         </div>
         <div class="l-stats">
@@ -66,6 +67,20 @@
           </article>
           <article class="fcard">
             <div class="ficon">
+              <svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="3" /><circle cx="16" cy="9" r="3" /><path d="M3 19c0-3 2.2-5 5-5M21 19c0-3-2.2-5-5-5M9.5 19c0-2.2 1.1-3.5 2.5-3.5s2.5 1.3 2.5 3.5" /></svg>
+            </div>
+            <h3>A crowd, not a promise</h3>
+            <p>Privacy here is a number you can read: every withdrawal could have come from any approved deposit of at least its size. Each deposit makes the rest harder to single out, so the pool protects people better the more of them use it — and the app shows you the size of your crowd before you withdraw.</p>
+          </article>
+          <article class="fcard">
+            <div class="ficon">
+              <svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3" /></svg>
+            </div>
+            <h3>Swap without a deposit</h3>
+            <p>Hold USDC on Solana, ETH on Base, BTC? Send it from any wallet or exchange and a fresh address receives another asset, with no key and nothing signed here. It breaks the chain's record of who paid whom — <a href="/app#swap">see what it does not hide</a>.</p>
+          </article>
+          <article class="fcard">
+            <div class="ficon">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="m8.5 12 2.5 2.5 4.5-5" /></svg>
             </div>
             <h3>Clean-funds proof</h3>
@@ -82,8 +97,8 @@
             <div class="ficon">
               <svg viewBox="0 0 24 24"><path d="M3 12h6" /><path d="M15 12h6" /><path d="m12 5 3 3.5-3 3.5-3-3.5Z" /><path d="m12 12 3 3.5-3 3.5-3-3.5Z" /></svg>
             </div>
-            <h3>Exit on another chain</h3>
-            <p>Receive on Solana, Base, Arbitrum, Ethereum, BNB Chain, Bitcoin or Zcash. The withdrawal passes through a single-use wallet of your own, so the bridge never sees which deposit was yours.</p>
+            <h3>Exit as anything, anywhere</h3>
+            <p>Receive USDC, SOL, BTC, ZEC or ETH on Solana, Base, Arbitrum, Ethereum, BNB Chain or Robinhood Chain itself. The withdrawal passes through a single-use wallet of your own, so the bridge never sees which deposit was yours.</p>
           </article>
           <article class="fcard">
             <div class="ficon">
@@ -218,12 +233,12 @@ nullifierEqualityCheck.out === 0;</code></pre>
           <p>A read-only scan of any wallet's public money trail. Use it before you deposit to see what is already linked to you, and after you withdraw to check that your fresh wallet only shows the relayer.</p>
         </details>
         <details>
-          <summary>Can I receive on another chain?</summary>
-          <p>Yes. Pick Solana, Base, Arbitrum, Ethereum, BNB Chain, Bitcoin or Zcash under <b>Receive on</b>. The pool pays a single-use wallet derived from your Zero Key, and that wallet pays the bridge, so the bridge only ever sees an ordinary transfer. We ask Relay and NEAR Intents for quotes through this site, so neither of them sees your IP, and the better quote wins. If a bridge cannot fill the order it refunds your own wallet, and you can retry or sweep it from the app.</p>
+          <summary>Can I receive another token, or on another chain?</summary>
+          <p>Yes, and the two work the same way. Under <b>Receive</b>, choose the chain — Robinhood Chain, Solana, Base, Arbitrum, Ethereum, BNB Chain, Bitcoin or Zcash — and then the token, such as USDC, a stablecoin on Robinhood Chain, or BTC. The recipient gets that token directly and never holds ETH. The pool pays a single-use wallet derived from your Zero Key, and that wallet pays the bridge, so the bridge only ever sees an ordinary transfer. We ask Relay and NEAR Intents for quotes through this site, so neither of them sees your IP, and the better quote wins. If a bridge cannot fill the order it refunds your own wallet, and you can retry or sweep it from the app.</p>
         </details>
         <details>
           <summary>Does bridging make me more private?</summary>
-          <p>A little, not a lot. Bridge records are public, so a determined observer can follow the hop to the other chain and see the amount. What it does give you is a bigger crowd on the destination side and a trail most tools stop following. Amount and timing still matter more than the route: read the privacy meter.</p>
+          <p>A little, not a lot. Bridge records are public, so a determined observer can follow the hop to the other chain and see the amount. Receiving a rare token can even expose you further, since few wallets hold it. What it does give you is a bigger crowd on the destination side and a trail most tools stop following. Amount and timing still matter more than the route: read the privacy meter.</p>
         </details>
         <details>
           <summary>What is the privacy meter?</summary>
