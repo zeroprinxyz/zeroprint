@@ -523,32 +523,3 @@ const tls = process.env.TLS_CERT
   console.log(`ZeroPrint UI on ${tls ? "https" : "http"}://${HOST}:${PORT}`),
 );
 
-// Tor onion service: plain HTTP on localhost for the local tor daemon. Onion addresses are
-// end-to-end encrypted and count as a secure context in Tor Browser, so no TLS (and no HSTS).
-if (process.env.ONION_PORT) {
-  http
-    .createServer((req, res) => {
-      const writeHead = res.writeHead.bind(res);
-      res.writeHead = (code, h) => writeHead(code, h && Object.fromEntries(Object.entries(h).filter(([k]) => k !== "strict-transport-security")));
-      onRequest(req, res);
-    })
-    .listen(Number(process.env.ONION_PORT), "127.0.0.1", () => console.log(`ZeroPrint onion backend on http://127.0.0.1:${process.env.ONION_PORT}`));
-}
-
-// A visitor's IP never leaves this process: rate limits see a salted hash, and the salt is
-// replaced every day, so yesterday's IDs can't be matched to today's.
-let salt = { key: randomBytes(32), at: Date.now() };
-function visitorId(req) {
-  // FOOTPRINT_LIMIT=off: a new ID per scan, so the tracer's per-visitor limit never applies
-  if (process.env.FOOTPRINT_LIMIT === "off") return `v-${randomBytes(8).toString("hex")}`;
-  if (Date.now() - salt.at > 86_400_000) salt = { key: randomBytes(32), at: Date.now() };
-  return `v-${createHash("sha256").update(salt.key).update(visitorIp(req)).digest("hex").slice(0, 16)}`;
-}
-
-// Behind the public reverse proxy every request comes from the proxy; only then trust its
-// X-Forwarded-For, so each visitor keeps their own tracer allowance.
-function visitorIp(req) {
-  const peer = req.socket.remoteAddress ?? "";
-  if (peer.replace(/^::ffff:/, "") === TRUSTED_PROXY) return String(req.headers["x-forwarded-for"] ?? "").split(",")[0].trim() || "visitor";
-  return peer || "visitor";
-}

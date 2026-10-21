@@ -207,7 +207,7 @@
             <li><b>Don't fund the recipient yourself.</b> The relayer pays gas; sending gas from your old wallet links them.</li>
             <li><b>Don't send it back.</b> Moving funds from the new wallet to the old one undoes everything.</li>
             <li><b>Different behaviour.</b> If the new wallet buys the same rare token at the same time as the old one, it can be matched.</li>
-            <li><b>Network privacy.</b> Your IP is visible to the site and RPCs you use. A VPN or Tor helps.</li>
+            <li><b>Network privacy.</b> Your IP is visible to this site and to the RPCs you use, and your internet provider sees that you came here. Opening ZeroPrint in the <a href="https://www.torproject.org/download/" target="_blank" rel="noreferrer">Tor Browser</a>, or over a VPN you trust, hides both.</li>
           </ul>
         </section>
 
@@ -428,8 +428,10 @@ event RootPosted(uint256 root, uint256 size);</code></pre>
         </section>
         <section id="mirrors">
           <h2>Mirrors</h2>
-          <p>The same front end can be served from IPFS. The IPFS copy reads the chain from the public Robinhood Chain RPC and uses zeroprint.xyz only for the relayer, ASP numbers and bridges; without zeroprint.xyz it still deposits, ragequits, approves from the deposit wallet and withdraws directly. Open it through a subdomain gateway (<code>https://&lt;CID&gt;.ipfs.dweb.link</code>) or your own IPFS node. Build it yourself with <code>zeroprint/ui/ipfs/build.sh</code> and compare the CID.</p>
-          <p>A Tor onion address hides your IP from the site itself. Both are listed here once they are live.</p>
+          <p>The same front end can be served from IPFS, so this website is not a single point of failure. The IPFS copy reads the chain from the public Robinhood Chain RPC and uses zeroprint.xyz only for the relayer, ASP numbers and bridges; without zeroprint.xyz it still deposits, ragequits, approves from the deposit wallet and withdraws directly.</p>
+          <p>Current build: <code class="mono" id="ipfsCid">bafybeidakv2542o2bw77bbn5g4nbhhu2wmgvynyrpisdsji2loku73m6xu</code></p>
+          <p>Open it with a browser that speaks IPFS natively (Brave, or any browser with the IPFS Companion extension) at <code>ipfs://&lt;CID&gt;</code>, or from your own IPFS node. Most free public gateways were shut down or rate-limited during 2026, so a gateway link is not reliable right now.</p>
+          <p><b>Verify it yourself:</b> run <code>zeroprint/ui/ipfs/build.sh</code> from the repository and compare the CID it prints with the one above. The CID is the hash of the files, so if they match you are running exactly this published code, and no server can swap it for something that steals your Zero Key.</p>
         </section>
         <section id="status">
           <h2>Status</h2>
