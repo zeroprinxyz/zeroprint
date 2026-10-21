@@ -36,6 +36,7 @@
           <a href="#why">Why privacy matters</a>
           <a href="#how">How it works</a>
           <a href="#asp">Clean funds: the ASP</a>
+          <a href="#screening">What gets denied</a>
           <a href="#ragequit">Ragequit</a>
           <h4>User guide</h4>
           <a href="#start">Getting started</a>
@@ -112,7 +113,7 @@
           <p>On ZeroPrint the ASP is a contract, <code>ZeroPrintASP</code>, and it is the only address allowed to publish the approved set. No server decides who gets in:</p>
           <ul>
             <li><b>Queue.</b> Each deposit is queued on-chain, which starts a <b>30-minute window</b> so hacks can be reported first. Anyone can queue; ZeroPrint's keeper does it automatically.</li>
-            <li><b>Screen.</b> Inside the window, a <b>guardian</b> can deny the deposit. ZeroPrint's keeper denies depositors on the <b>OFAC sanctions list</b> and on a ZeroPrint blocklist of known scam and trap wallets on Robinhood Chain. The guardian can do nothing else, and nothing after the window.</li>
+            <li><b>Screen.</b> Inside the window, a <b>guardian</b> can deny the deposit. ZeroPrint's keeper denies depositors on the <b>OFAC sanctions list</b> and on a short ZeroPrint list of wallets it has identified as scams on Robinhood Chain. The guardian can do nothing else, and nothing after the window. See <a href="#screening">what gets denied</a>.</li>
             <li><b>Approve.</b> After the window, <b>anyone</b> can approve the deposit: the contract adds it to its Merkle tree and posts the new root to the Entrypoint. The keeper does this automatically.</li>
             <li><b>Final.</b> An approval cannot be revoked; the set only grows.</li>
           </ul>
@@ -120,6 +121,20 @@
           <p>The app rebuilds the whole set from the contract's events and checks it against the on-chain root, so nobody learns which deposit a visitor owns.</p>
         </section>
 
+        <section id="screening">
+          <h2>What gets denied</h2>
+          <p>Only one thing is checked, and it is the <b>wallet that sent the deposit</b>. Not the amount, not the timing, not where you later withdraw to. Two lists are used:</p>
+          <ul>
+            <li><b>The OFAC sanctions list.</b> The addresses the US Treasury publishes on its <a href="https://sanctionslist.ofac.treas.gov/Home/SdnList" target="_blank" rel="noreferrer">SDN list</a>, refreshed every day from the public mirror at <a href="https://github.com/0xB10C/ofac-sanctioned-digital-currency-addresses" target="_blank" rel="noreferrer">0xB10C/ofac-sanctioned-digital-currency-addresses</a>. It is the same list exchanges use, we add nothing to it, and you can read it yourself before you deposit.</li>
+            <li><b>A short ZeroPrint list</b> of wallets we have identified as scams on Robinhood Chain, such as the operator of 81%-fee trap pools. It currently holds a single address. We do not publish the entries: a listed wallet would simply move to a new one, and the list would stop working.</li>
+          </ul>
+          <p>A deposit from any other wallet passes. There is no risk score, no chain-analysis vendor and no profile of you.</p>
+          <h3>What this does not catch</h3>
+          <p>Sanctions lists name addresses months after the fact, if ever, and a 30-minute window is not long enough for a fresh hack to be reported. <b>Money stolen today will pass.</b> Screening raises the cost of using ZeroPrint for known-bad funds; it does not make the pool clean, and we will not claim it does.</p>
+          <h3>Denials are public</h3>
+          <p>Every denial is an on-chain <code>Denied(label, reason)</code> event carrying the reason in plain text, so a denial can never be quiet. A denied deposit is not frozen: <a href="#ragequit">ragequit</a> returns every wei to the wallet that sent it.</p>
+          <p>Live counts for both lists are on the <a href="/status">status page</a>.</p>
+        </section>
         <section id="ragequit">
           <h2>Ragequit</h2>
           <p>If a deposit is denied, still pending, or you simply want out, the <b>original depositing wallet</b> can ragequit: it proves ownership of the note and gets the remaining balance back. This is public (it shows the money returned to the same wallet), but it means the ASP can never freeze or take your funds.</p>

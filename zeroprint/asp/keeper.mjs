@@ -75,6 +75,7 @@ const save = () => {
 // ---------- blocklist ----------
 let blocked = new Map();
 let ofacAt = 0;
+let listCounts = { ofac: 0, blocklist: 0, ofacAt: 0, ofacUrl: OFAC_URL };
 async function refreshBlocklist() {
   const next = new Map();
   let text = "";
@@ -96,12 +97,14 @@ async function refreshBlocklist() {
     } catch {}
   }
   for (const a of parseAddressList(text)) next.set(a, "OFAC sanctioned address");
+  const ofac = next.size;
   for (const f of [BLOCKLIST_PATH, EXTRA_BLOCKLIST_PATH].filter(Boolean)) {
     try {
       for (const e of JSON.parse(fs.readFileSync(f, "utf8"))) next.set(e.address.toLowerCase(), `ZeroPrint blocklist: ${e.reason}`);
     } catch {}
   }
   blocked = next;
+  listCounts = { ofac, blocklist: next.size - ofac, ofacAt, ofacUrl: OFAC_URL };
 }
 
 // ---------- sync ----------
@@ -208,6 +211,8 @@ const counts = () => {
     denied: ds.filter((d) => d.denied).length,
     lastBlock: state.lastBlock,
     onchainAsp: true,
+    // what the guardian screens against, so the site can state it instead of asking for trust
+    screening: listCounts,
   };
 };
 const routes = {

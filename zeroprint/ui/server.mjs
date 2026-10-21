@@ -315,6 +315,7 @@ async function statusReport() {
     at: now,
     chain: block ? { name: CONFIG.chainName, chainId: d.chainId, block: Number(block.number), lagSec: now - Number(block.timestamp) } : null,
     pool: { address: d.pool, balance: poolBalance, ...(stats && { deposits: stats.deposits, approved: stats.approved, pending: stats.pending, denied: stats.denied, windowSec: stats.delaySec }) },
+    screening: stats?.screening ?? null,
     keeper: health
       ? { up: true, ok: health.ok, lastTickSec: health.at ? Math.round((Date.now() - health.at) / 1000) : null, error: health.error ?? null, address: health.keeper ?? null, guardian: health.guardian ?? null, balance: await balanceOf(health.keeper) }
       : { up: false },

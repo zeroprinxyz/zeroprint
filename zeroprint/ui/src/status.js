@@ -55,6 +55,19 @@ async function draw() {
   if (s.pool.approved != null)
     rows.push(row(s.pool.pending > 0 ? "warn" : "ok", "ASP screening", `${s.pool.approved} approved · ${s.pool.pending} waiting · ${s.pool.denied} denied`, s.pool.windowSec ? `window ${Math.round(s.pool.windowSec / 60)} min` : ""));
   rows.push(row(rootCheck.startsWith("✅") || rootCheck.startsWith("no") ? "ok" : rootCheck.startsWith("checking") ? "warn" : "bad", "ASP root", rootCheck));
+  // screening lists the guardian can deny against
+  if (s.screening) {
+    const { ofac, blocklist, ofacAt } = s.screening;
+    const age = ofacAt ? Math.round((Date.now() - ofacAt) / 1000) : null;
+    rows.push(
+      row(
+        !ofac ? "bad" : age != null && age > 172800 ? "warn" : "ok",
+        "Screening lists",
+        `${ofac} OFAC ${ofac === 1 ? "address" : "addresses"} · ${blocklist} ZeroPrint ${blocklist === 1 ? "entry" : "entries"}`,
+        `${ofac ? `OFAC list refreshed ${ago(age)}` : "OFAC list did not load"} · <a href="/docs#screening">what gets denied</a>`,
+      ),
+    );
+  }
   // keeper
   const k = s.keeper;
   if (!k.up) rows.push(row("bad", "Keeper", "offline", "deposits still get approved: queue and approve yourself from the deposit wallet"));

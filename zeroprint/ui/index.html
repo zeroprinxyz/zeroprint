@@ -230,6 +230,10 @@ nullifierEqualityCheck.out === 0;</code></pre>
           <p>A live rating of the withdrawal you are about to make, computed in your browser from the deposit list everyone can read. It counts how many deposits could have been the source, warns when you are taking out exactly what you put in, and tells you when you are withdrawing too soon. Nothing about you is sent anywhere to compute it.</p>
         </details>
         <details>
+          <summary>What exactly gets denied?</summary>
+          <p>One thing is checked: the wallet that sent the deposit. It is denied if that wallet is on the OFAC sanctions list, or on a short list of wallets we have identified as scams on Robinhood Chain. Nothing else — no risk score, no chain-analysis vendor, no profile of you. A denied deposit is never frozen: ragequit returns every wei to the wallet that sent it, and the denial is an on-chain event with its reason in plain text. Honest limit: sanctions lists name addresses long after the fact, so money stolen today will pass. <a href="/docs#screening">The details are in the docs.</a></p>
+        </details>
+        <details>
           <summary>What does it cost?</summary>
           <p>No protocol fee. The relayer charges only the gas it pays, capped at 0.5% by the contract. Withdrawing to another chain costs the bridge's own fee, which you see before you confirm; we add nothing to it.</p>
         </details>
