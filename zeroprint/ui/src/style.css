@@ -2067,3 +2067,86 @@ label.inl select {
 .pick-ask:hover {
   border-color: var(--accent);
 }
+
+/* The token chip. Quiet by default and quieter still before there is an address. */
+.zero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: rgba(124, 231, 208, 0.08);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.zero-chip:hover {
+  background: rgba(124, 231, 208, 0.16);
+}
+.zero-chip.soon {
+  border-color: var(--line);
+  background: none;
+  color: var(--dim);
+  cursor: default;
+}
+
+.zero-label {
+  cursor: pointer;
+  font-weight: 400;
+}
+/* The name is the part worth reading; "Buy" is just the verb in front of it. */
+.zero-label b {
+  font-weight: 700;
+}
+.zero-copy {
+  display: flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.75;
+}
+.zero-copy svg,
+.zero-chart svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.zero-copy:hover {
+  opacity: 1;
+}
+
+/* The chart, next to the chip: the other thing somebody checks before buying, so it is marked
+   like the chip rather than like the quiet links. The pulse stays on the chip alone: two of them
+   side by side read as a fault, not as an invitation. */
+.zero-chart {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: rgba(124, 231, 208, 0.08);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.zero-chart:hover {
+  background: rgba(124, 231, 208, 0.16);
+  color: var(--text);
+}
+
+.zero-ca {
+  font-size: 12px;
+  opacity: 0.8;
+  letter-spacing: 0.02em;
+}

@@ -91,12 +91,18 @@ import { looksLikeAddress, mountPicker } from "./picker.js";
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const short = (a) => (a && a.length > 16 ? `${a.slice(0, 8)}…${a.slice(-6)}` : (a ?? ""));
-const api = (p, init) =>
-  fetch(`/swap-api${p}`, { cache: "no-store", ...init }).then(async (r) => {
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(j.error || `swap service error (${r.status})`);
-    return j;
-  });
+// A quote waits on two providers, and a slow one can time out at the edge rather than here. That
+// is a blip, not an answer, so a gateway error is tried once more before anyone is told about it.
+const api = async (p, init, retried = false) => {
+  const r = await fetch(`/swap-api${p}`, { cache: "no-store", ...init });
+  const j = await r.json().catch(() => ({}));
+  if (r.ok) return j;
+  if (!retried && [502, 503, 504].includes(r.status)) {
+    await new Promise((s) => setTimeout(s, 1500));
+    return api(p, init, true);
+  }
+  throw new Error(j.error || (r.status >= 500 ? "the providers did not answer in time — try again" : `swap service error (${r.status})`));
+};
 
 const STATE_TEXT = {
   quoted: ["Waiting for your deposit", "mid"],

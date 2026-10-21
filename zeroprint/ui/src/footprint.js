@@ -424,6 +424,18 @@ function moneyMap(r) {
 }
 
 /** What a scan cannot show, so nobody reads "nothing found" as "nothing there". */
+/**
+ * A wallet can be funded from inside a contract - a swap's proceeds, a refund, a payout - and
+ * Robinhood Chain publishes no record of that: no service indexes it and our own node keeps no
+ * archive. The scan then shows nothing coming in, which reads as "this wallet was never funded"
+ * rather than "we cannot see how". Say which it is.
+ */
+function invisibleFunding(r) {
+  if (r.in?.length || r.isContract) return "";
+  if (!r.out?.length && !r.firstSeen) return "";
+  return `<div class="note">Nothing is shown coming in, and this wallet has clearly been used. On Robinhood Chain, ETH moved from inside a contract - a swap paying out, a refund, a claim - is not published anywhere we can read, so a wallet funded that way shows no incoming transfer here. The explorer's "internal transactions" tab will show it.</div>`;
+}
+
 function limits(r) {
   const items = [
     r.capped && "This wallet is busy: only its most recent transactions were read, so older links may be missing.",
@@ -465,6 +477,7 @@ function report(r) {
       .map(([lv, t, d, src]) => `<div class="fp-find lv-${lv}"><i></i><div><b>${t}</b><p>${esc(d)}</p>${src ? `<small class="fp-src">${esc(src)}</small>` : ""}</div></div>`)
       .join("")}</div>
     <div id="fpLaunches"></div>
+    ${invisibleFunding(r)}
     ${limits(r)}
     <div class="fp-viz">
       <div class="fp-vtabs" role="tablist">

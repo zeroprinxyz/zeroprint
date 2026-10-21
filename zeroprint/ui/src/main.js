@@ -10,6 +10,7 @@ import { forgetKey, hasStoredKey, saveKey, unlockKey } from "./keystore.js";
 import { mountMobileNav } from "./mnav.js";
 import { mountPicker } from "./picker.js";
 import { enableDeep, viewSwap } from "./swap.js";
+import { mountZeroChip } from "./zero.js";
 import { ROUND, amountCounts, isRound, meterHtml, privacyCheck } from "./privacy.js";
 import { loadLocal, saveLocal } from "./store.js";
 import { swapHops } from "./swapstore.js";
@@ -1067,6 +1068,7 @@ function netSwitch(host) {
     .join("");
 }
 netSwitch($("#net"));
+mountZeroChip($("#zeroChip"));
 startShade($("#fx"), { intensity: 0.45 });
 $("#connect").onclick = () => {
   S.walletChosen = false; // always show the picker on an explicit click

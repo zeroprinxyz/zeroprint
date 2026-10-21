@@ -1,3 +1,4 @@
+import { mountZeroChip } from "./zero.js";
 import "./style.css";
 import "./landing.css";
 import { startShade } from "./bgfx.js";
@@ -56,3 +57,6 @@ async function stats() {
 }
 stats();
 setInterval(stats, 30_000);
+
+
+mountZeroChip(document.querySelector("#zeroChip"));

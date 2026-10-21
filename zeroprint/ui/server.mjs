@@ -506,6 +506,20 @@ async function handle(req, res) {
     return sendJson(res, 404, { error: "not found" });
   }
 
+  // The token, when there is one. Written by hand (not by this process) to a file beside
+  // the build, and read per request so setting it needs no deploy: a wrong address here is the one
+  // mistake nobody can take back, so it is one file, one writer, and no cache.
+  if (p === "/token-api") {
+    let token = null;
+    try {
+      const raw = JSON.parse(fs.readFileSync(process.env.TOKEN_FILE ?? path.join(import.meta.dirname, "token.json"), "utf8"));
+      if (/^0x[0-9a-fA-F]{40}$/.test(raw.ca ?? "") && !/^0x0{40}$/.test(raw.ca)) token = { ca: raw.ca, symbol: raw.symbol ?? "ZERO", chain: raw.chain ?? CONFIG.chainName, at: raw.at ?? null };
+    } catch {
+      /* no file, or nothing readable in it: there is no token yet */
+    }
+    return sendJson(res, 200, { token });
+  }
+
   if (p === "/config.json") {
     res.writeHead(200, { ...SECURITY, "content-type": "application/json", "cache-control": "no-store" });
     return res.end(JSON.stringify(CONFIG));

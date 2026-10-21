@@ -406,3 +406,61 @@ pre.code .k {
 .trylink:hover {
   text-decoration: underline;
 }
+
+/* The token chip sits in the nav beside Footprint and is marked the same way, so the two things
+   worth clicking on arrival look like each other. Before there is an address it loses the mark. */
+.lnav .zero-chip.hot {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+  border: 1px solid rgba(124, 231, 208, 0.35);
+  background: rgba(124, 231, 208, 0.07);
+  position: relative;
+  font: inherit;
+  cursor: pointer;
+}
+.lnav .zero-chip.hot::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: halo 2s ease-in-out infinite;
+}
+.lnav .zero-chip.hot:hover {
+  background: rgba(124, 231, 208, 0.14);
+}
+/* In the landing nav the links are quieter than in the app header, so the chart follows the
+   chip's nav colours there instead of its own. */
+.lnav a.zero-chart {
+  padding: 7px 13px;
+  border-radius: 999px;
+  color: var(--accent);
+  border: 1px solid rgba(124, 231, 208, 0.35);
+  background: rgba(124, 231, 208, 0.07);
+}
+.lnav a.zero-chart:hover {
+  color: var(--accent);
+  background: rgba(124, 231, 208, 0.14);
+}
+
+.lnav .zero-chip.soon,
+.lnav .zero-chip.soon::after {
+  animation: none;
+  background: none;
+  border-color: var(--line);
+  color: var(--dim);
+  box-shadow: none;
+  content: none;
+}
+
+.zero-ca {
+  font-size: 12px;
+  opacity: 0.8;
+  letter-spacing: 0.02em;
+}

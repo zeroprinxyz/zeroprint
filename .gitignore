@@ -17,3 +17,4 @@ node_modules
 # build cache
 *.tsbuildinfo
 zeroprint/relayer/*/relayer.sqlite
+zeroprint/ui/token.json
