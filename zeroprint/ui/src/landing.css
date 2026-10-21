@@ -145,6 +145,15 @@ a.btn {
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 14px;
 }
+/* six cards read better as 3 + 3 than as 4 + 2 */
+.cards:has(> :nth-child(5)) {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+@media (min-width: 1000px) {
+  .cards:has(> :nth-child(5)) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
 .fcard {
   padding: 24px;
   border-radius: 18px;

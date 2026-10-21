@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ZeroPrint · Know your footprint. Leave zero.</title>
-    <meta name="description" content="Zero-knowledge privacy pool for ETH on Robinhood Chain. Proofs made in your browser, no admin keys, clean-funds screening." />
+    <meta name="description" content="Zero-knowledge privacy pool for ETH on Robinhood Chain. Proofs made in your browser, no admin keys, clean-funds screening, and exits to Solana, Bitcoin and five other chains." />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body class="landing">
@@ -80,6 +80,20 @@
           </article>
           <article class="fcard">
             <div class="ficon">
+              <svg viewBox="0 0 24 24"><path d="M3 12h6" /><path d="M15 12h6" /><path d="m12 5 3 3.5-3 3.5-3-3.5Z" /><path d="m12 12 3 3.5-3 3.5-3-3.5Z" /></svg>
+            </div>
+            <h3>Exit on another chain</h3>
+            <p>Receive on Solana, Base, Arbitrum, Ethereum, BNB Chain, Bitcoin or Zcash. The withdrawal passes through a single-use wallet of your own, so the bridge never sees which deposit was yours.</p>
+          </article>
+          <article class="fcard">
+            <div class="ficon">
+              <svg viewBox="0 0 24 24"><path d="M12 20v-8" /><path d="M12 12 6 7" /><path d="m12 12 6-5" /><circle cx="12" cy="21" r="1.6" /><circle cx="5" cy="6" r="1.6" /><circle cx="19" cy="6" r="1.6" /></svg>
+            </div>
+            <h3>Privacy meter, and splits</h3>
+            <p>Before you confirm, the app rates the withdrawal from the public deposit set and says what is weak. Split it into smaller parts at random times, to different wallets, in one step.</p>
+          </article>
+          <article class="fcard">
+            <div class="ficon">
               <svg viewBox="0 0 24 24"><path d="M7 3c1.7 0 3 1.6 3 3.6S8.9 11 7.5 11 5 9.3 5 7.2 5.3 3 7 3Z" /><path d="M5.6 13h3.5l-.5 3a1.5 1.5 0 0 1-3 0Z" /><path d="M17 8c-1.7 0-3 1.6-3 3.6s1.1 4.4 2.5 4.4 2.5-1.7 2.5-3.8S18.7 8 17 8Z" /><path d="M18.4 18h-3.5l.5 2a1.5 1.5 0 0 0 3 0Z" /></svg>
             </div>
             <h3>Footprint scan</h3>
@@ -108,7 +122,7 @@
           <li>
             <span class="n">03</span>
             <h3>Withdraw</h3>
-            <p>Your browser builds a zero-knowledge proof: "I own one of these clean deposits." The relayer submits it to a fresh address.</p>
+            <p>Your browser builds a zero-knowledge proof: "I own one of these clean deposits." The relayer submits it to a fresh address, on Robinhood Chain or on Solana, Bitcoin and five other chains. A meter rates how well the withdrawal hides before you confirm it.</p>
           </li>
         </ol>
       </div>
@@ -169,6 +183,10 @@ nullifierEqualityCheck.out === 0;</code></pre>
             <p>Flagged deposits are denied. They can only ragequit, publicly, back to the wallet that sent them.</p>
           </article>
           <article class="fcard plain">
+            <h3>Bridging is not a disguise</h3>
+            <p>Bridge records are public. Moving to another chain breaks most tracking tools, not a determined one. The crowd you hide in is still the pool.</p>
+          </article>
+          <article class="fcard plain">
             <h3>It can't recover your key</h3>
             <p>No accounts, no custody. Your 12-word Zero Key is the only way to withdraw. Write it on paper.</p>
           </article>
@@ -200,8 +218,20 @@ nullifierEqualityCheck.out === 0;</code></pre>
           <p>A read-only scan of any wallet's public money trail. Use it before you deposit to see what is already linked to you, and after you withdraw to check that your fresh wallet only shows the relayer.</p>
         </details>
         <details>
+          <summary>Can I receive on another chain?</summary>
+          <p>Yes. Pick Solana, Base, Arbitrum, Ethereum, BNB Chain, Bitcoin or Zcash under <b>Receive on</b>. The pool pays a single-use wallet derived from your Zero Key, and that wallet pays the bridge, so the bridge only ever sees an ordinary transfer. We ask Relay and NEAR Intents for quotes through this site, so neither of them sees your IP, and the better quote wins. If a bridge cannot fill the order it refunds your own wallet, and you can retry or sweep it from the app.</p>
+        </details>
+        <details>
+          <summary>Does bridging make me more private?</summary>
+          <p>A little, not a lot. Bridge records are public, so a determined observer can follow the hop to the other chain and see the amount. What it does give you is a bigger crowd on the destination side and a trail most tools stop following. Amount and timing still matter more than the route: read the privacy meter.</p>
+        </details>
+        <details>
+          <summary>What is the privacy meter?</summary>
+          <p>A live rating of the withdrawal you are about to make, computed in your browser from the deposit list everyone can read. It counts how many deposits could have been the source, warns when you are taking out exactly what you put in, and tells you when you are withdrawing too soon. Nothing about you is sent anywhere to compute it.</p>
+        </details>
+        <details>
           <summary>What does it cost?</summary>
-          <p>No protocol fee. The relayer charges only the gas it pays, capped at 0.5% by the contract.</p>
+          <p>No protocol fee. The relayer charges only the gas it pays, capped at 0.5% by the contract. Withdrawing to another chain costs the bridge's own fee, which you see before you confirm; we add nothing to it.</p>
         </details>
       </div>
     </section>
